@@ -7,6 +7,7 @@ import Menu from '../components/Menu'; // Importando o componente Menu
 import style from './App.module.scss'; // Importando o estilo do App
 import EditarCadastro from './Cadastro/EditarCadastro';
 import Inicio from './Inicio'; // ou '../pages/Inicio' se estiver em outro lugar
+import Veiculo from './Veiculo';
 
 function App() {
   return (
@@ -18,7 +19,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Inicio />} />
           <Route path="/login" element={<div>Em breve: Página de Veículo</div>} />
-          <Route path="/veiculo" element={<div>Em breve: Página de Veículo</div>} />
+          
+          <Route path="/veiculo" element={<Veiculo />} />
+
           <Route path="/marcas" element={<div>Em breve: Página de Veículo</div>} />
           <Route path="/cadastro" element={<Cadastro />} />
           <Route path="/dashboard" element={<div>Em breve: Página de Veículo</div>} />
