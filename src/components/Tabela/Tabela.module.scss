@@ -1,0 +1,50 @@
+.tabelaContainer {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    overflow-x: auto;
+  }
+  
+  .tabela {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .tabela th,
+  .tabela td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .tabela th {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+  }
+  
+  .tabela tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .cabecalho {
+    text-transform: uppercase;
+  }
+  
+  .linha:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .celula {
+    font-size: 1rem;
+    color: #333;
+  }
+  
+  @media screen and (max-width: 768px) {
+    .tabela {
+      font-size: 0.9rem;
+    }
+  }
+  

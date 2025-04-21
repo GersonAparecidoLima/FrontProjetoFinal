@@ -1,0 +1,60 @@
+/* Estilos principais do Menu */
+.Navbar {
+  background-color: #d8d9da;
+  padding: 10px;
+  border-radius: 5px;
+  width: 100%; /* Garantir que o menu ocupe toda a largura disponível */
+  box-sizing: border-box;
+}
+
+/* Estilos para a lista de navegação */
+.Navbar ul {
+  list-style: none;
+  display: flex;  /* Usando flex para exibir os itens horizontalmente */
+  gap: 20px; /* Espaçamento entre os itens */
+  margin: 0;
+  padding: 0;
+  justify-content: flex-start; /* Alinha os itens à esquerda */
+}
+
+.Navbar li {
+  a {
+    color: rgb(12, 12, 12); /* Cor dos links */
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    transition: background-color 0.3s; /* Suaviza o efeito de hover */
+  }
+
+  a:hover {
+    background-color: #647063; /* Cor de fundo ao passar o mouse */
+  }
+}
+
+/* Estilos para o título */
+.Navbar h1 {
+  color: #000; /* Cor do título */
+  font-size: 2rem;
+  text-align: center;
+  margin-top: 50px;
+}
+
+/* Estilos responsivos - ajuste para telas maiores */
+@media screen and (min-width: 1280px) {
+  .Navbar {
+    display: flex;
+    justify-content: center; /* Alinha o menu centralizado na tela */
+    align-items: center;
+    padding: 20px 40px; /* Ajuste do padding para telas grandes */
+  }
+
+  .Navbar ul {
+    gap: 40px; /* Aumenta o espaço entre os itens na versão desktop */
+  }
+
+  .Navbar li {
+    a {
+      font-size: 1.2rem; /* Aumenta o tamanho da fonte para telas maiores */
+    }
+  }
+}
