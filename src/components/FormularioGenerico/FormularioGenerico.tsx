@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; 
+import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import style from './FormularioGenerico.module.scss';
 
 interface Campo {
@@ -12,10 +12,15 @@ interface Campo {
 interface Props {
   campos: Campo[];
   onSubmit: (dados: { [key: string]: string }) => void;
-  tipoFormulario: string; // pode usar isso pra personalizar o texto do botão, etc.
+  tipoFormulario: string;
+  exibirBotao?: boolean;
 }
 
-export default function FormularioGenerico({ campos, onSubmit, tipoFormulario }: Props) {
+// Componente com forwardRef para permitir submit externo
+const FormularioGenerico = forwardRef(function FormularioGenerico(
+  { campos, onSubmit, tipoFormulario, exibirBotao = true }: Props,
+  ref
+) {
   const [dadosFormulario, setDadosFormulario] = useState<Record<string, string>>(
     campos.reduce((acc, campo) => {
       acc[campo.nome] = campo.valor || '';
@@ -53,6 +58,15 @@ export default function FormularioGenerico({ campos, onSubmit, tipoFormulario }:
     }
   };
 
+  // Expõe a função de submit para o componente pai via ref
+  useImperativeHandle(ref, () => ({
+    submitarFormulario: () => {
+      if (validarFormulario()) {
+        onSubmit(dadosFormulario);
+      }
+    },
+  }));
+
   return (
     <form className={style.formularioGenerico} onSubmit={handleSubmit}>
       {campos.map((campo) => (
@@ -70,10 +84,13 @@ export default function FormularioGenerico({ campos, onSubmit, tipoFormulario }:
         </div>
       ))}
 
-      {/* Botão de envio dentro do formulário */}
-      <button type="submit" className={style.submitButton}>
-        {tipoFormulario === 'cadastro' ? 'Cadastrar' : 'Enviar'}
-      </button>
+      {exibirBotao && (
+        <button type="submit" className={style.submitButton}>
+          {tipoFormulario === 'cadastro' ? 'Cadastrar' : 'Enviar'}
+        </button>
+      )}
     </form>
   );
-}
+});
+
+export default FormularioGenerico;
