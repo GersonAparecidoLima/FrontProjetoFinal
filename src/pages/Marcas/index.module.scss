@@ -1,0 +1,21 @@
+.botoesContainer {
+  display: flex;
+  justify-content: flex-end; // Alinha os botões à direita
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.botao {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.botao:hover {
+  background-color: #0056b3;
+}

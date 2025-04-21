@@ -10,6 +10,7 @@ import Inicio from './Inicio'; // ou '../pages/Inicio' se estiver em outro lugar
 import Veiculo from './Veiculo';
 import Login from './Login';
 import CadastraVeiculo from './Veiculo/CadastraVeiculo';
+import Marcas from './Marcas';
 
 function App() {
   return (
@@ -25,7 +26,7 @@ function App() {
           <Route path="/veiculo" element={<Veiculo />} />
           <Route path="/cadastro-veiculo" element={<CadastraVeiculo />} />
 
-          <Route path="/marcas" element={<div>Em breve: Página de Veículo</div>} />
+          <Route path="/marcas" element={<Marcas />} />
           <Route path="/cadastro" element={<Cadastro />} />
           <Route path="/dashboard" element={<div>Em breve: Página de Veículo</div>} />
           <Route path="/sair" element={<div>Em breve: Página de Veículo</div>} />  
