@@ -8,6 +8,7 @@ import style from './App.module.scss'; // Importando o estilo do App
 import EditarCadastro from './Cadastro/EditarCadastro';
 import Inicio from './Inicio'; // ou '../pages/Inicio' se estiver em outro lugar
 import Veiculo from './Veiculo';
+import Login from './Login';
 
 function App() {
   return (
@@ -18,7 +19,7 @@ function App() {
 
         <Routes>
           <Route path="/" element={<Inicio />} />
-          <Route path="/login" element={<div>Em breve: Página de Veículo</div>} />
+          <Route path="/login" element={<Login />} />
           
           <Route path="/veiculo" element={<Veiculo />} />
 

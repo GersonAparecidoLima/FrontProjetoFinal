@@ -1,0 +1,22 @@
+.botoesContainer {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end; // ← agora sim, alinha à direita
+  }
+  
+  .botao {
+    padding: 8px 16px;
+    background-color: #1976d2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+  
+    &:hover {
+      background-color: #115293;
+    }
+  }
+  

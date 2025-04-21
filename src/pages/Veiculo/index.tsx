@@ -1,5 +1,6 @@
 import React from 'react';
 import Tabela from '../../components/Tabela/Tabela'; // Caminho certo pro seu componente
+import styles from './index.module.scss'; // import do estilo novo
 
 const Veiculo = () => {
   const cabecalhos = ['Marca', 'Modelo', 'Ano', 'Valor'];
@@ -16,6 +17,14 @@ const Veiculo = () => {
   return (
     <div>    
       <Tabela cabecalhos={cabecalhos} dados={dados} />
+
+      <div className={styles.botoesContainer}>
+        <button className={styles.botao}>Incluir</button>
+        <button className={styles.botao}>Editar</button>
+        <button className={styles.botao}>Excluir</button>
+      </div>
+
+
     </div>
   );
 };
