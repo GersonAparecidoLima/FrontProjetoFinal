@@ -19,21 +19,25 @@ const Marcas = () => {
       }
 
       const marcas = await resposta.json();
+
       const dadosFormatados = marcas.map((marca: { descricao: string, id: string }) => [
         marca.descricao,
-        <>
-          <button 
-            className={`${styles.botao} ${styles.alterar}`} 
-            onClick={() => handleAlterar(marca.id)}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+          <button
+            className={`${styles.botao} ${styles.alterar}`}
+            onClick={() => handleAlterar(marca.id)}
+          >
             Alterar
           </button>
-          <button 
-            className={`${styles.botao} ${styles.excluir}`} 
-            onClick={() => handleExcluir(marca.id)}>
+          <button
+            className={`${styles.botao} ${styles.excluir}`}
+            onClick={() => handleExcluir(marca.id)}
+          >
             Excluir
           </button>
-        </>
+        </div>
       ]);
+
       setDados(dadosFormatados);
     } catch (erro) {
       console.error('Erro ao carregar marcas:', erro);
@@ -42,7 +46,7 @@ const Marcas = () => {
   };
 
   useEffect(() => {
-    fetchMarcas(); // Chama a função ao montar o componente ou ao mudar de rota
+    fetchMarcas();
   }, [location]);
 
   const handleAlterar = (id: string) => {
@@ -59,16 +63,15 @@ const Marcas = () => {
         if (!resposta.ok) {
           throw new Error('Erro ao excluir a marca');
         }
+
         alert('Marca excluída com sucesso!');
-        // Atualiza o estado para remover a marca excluída da lista
-        setDados(dados.filter((marca) => marca[1].props.children[1].props.onClick !== handleExcluir));
+        fetchMarcas(); // Recarrega os dados após exclusão
       } catch (erro) {
         console.error('Erro ao excluir marca:', erro);
         alert('Erro ao excluir a marca');
       }
     }
   };
-  
 
   return (
     <div className={styles.container}>

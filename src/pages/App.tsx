@@ -10,6 +10,7 @@ import Login from './Login';
 import CadastraVeiculo from './Veiculo/CadastraVeiculo';
 import Marcas from './Marcas';
 import CadastroMarca from './Marcas/CadastroMarca';
+import EditarCadastroMarca from './Marcas/EditarCadastroMarca';
 
 function App() {
   return (
@@ -30,7 +31,7 @@ function App() {
           <Route path="/cadastro-marca" element={<CadastroMarca />} />
           <Route path="/dashboard" element={<div>Em breve: Página de Veículo</div>} />
           <Route path="/sair" element={<div>Em breve: Página de Veículo</div>} />  
-          
+          <Route path="/editar-marca/:id" element={<EditarCadastroMarca />} />
           <Route path="/editar/:id" element={<EditarCadastro />} />
         </Routes>
       </div>
