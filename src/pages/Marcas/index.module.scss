@@ -1,11 +1,11 @@
+
 .container {
   display: flex;
   justify-content: center; // Centraliza horizontalmente
-  align-items: center; // Centraliza verticalmente
-  min-height: 100vh; // Garante que ocupe toda a altura da tela
+  align-items: flex-start; // Alinha o conteúdo no topo
+  min-height: 100vh;
   padding: 20px;
 }
-
 .tabelaContainer {
   width: 80%; // Define a largura da tabela (pode ser ajustado conforme necessário)
   max-width: 1000px; // Define a largura máxima da tabela
@@ -23,6 +23,8 @@
   margin-top: 1.5rem;
   width: 100%; // Garante que os botões ocupem toda a largura disponível
 }
+
+
 
 .botao {
   padding: 8px 16px;
