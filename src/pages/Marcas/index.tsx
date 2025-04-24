@@ -53,7 +53,6 @@ const Marcas = () => {
     const confirmacao = window.confirm('Tem certeza que deseja excluir esta marca?');
     if (confirmacao) {
       try {
-        // Fazendo a requisição de DELETE para a API com o ID correto
         const resposta = await fetch(`http://localhost:3000/marca/${id}`, {
           method: 'DELETE',
         });
@@ -61,14 +60,15 @@ const Marcas = () => {
           throw new Error('Erro ao excluir a marca');
         }
         alert('Marca excluída com sucesso!');
-        // Após a exclusão, recarrega a lista de marcas
-        fetchMarcas(); // Recarrega as marcas
+        // Atualiza o estado para remover a marca excluída da lista
+        setDados(dados.filter((marca) => marca[1].props.children[1].props.onClick !== handleExcluir));
       } catch (erro) {
         console.error('Erro ao excluir marca:', erro);
         alert('Erro ao excluir a marca');
       }
     }
   };
+  
 
   return (
     <div className={styles.container}>
