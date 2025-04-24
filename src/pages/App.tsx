@@ -1,8 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Cadastro from '../pages/Cadastro/Cadastro'; // Importando o componente Cadastro
-import Produto from '../pages/Produto/Produto'; // Importando o componente Produto
-import ListaUsuario from './Cadastro/ListaUsuario'; // Importando o componente ListaUsuario
 import Menu from '../components/Menu'; // Importando o componente Menu
 import style from './App.module.scss'; // Importando o estilo do App
 import EditarCadastro from './Cadastro/EditarCadastro';
@@ -11,6 +9,7 @@ import Veiculo from './Veiculo';
 import Login from './Login';
 import CadastraVeiculo from './Veiculo/CadastraVeiculo';
 import Marcas from './Marcas';
+import CadastroMarca from './Marcas/CadastroMarca';
 
 function App() {
   return (
@@ -28,9 +27,10 @@ function App() {
 
           <Route path="/marcas" element={<Marcas />} />
           <Route path="/cadastro" element={<Cadastro />} />
+          <Route path="/cadastro-marca" element={<CadastroMarca />} />
           <Route path="/dashboard" element={<div>Em breve: Página de Veículo</div>} />
           <Route path="/sair" element={<div>Em breve: Página de Veículo</div>} />  
-
+          
           <Route path="/editar/:id" element={<EditarCadastro />} />
         </Routes>
       </div>
