@@ -1,51 +1,84 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom'; // Importa useLocation
-import Tabela from '../../components/Tabela/Tabela'; // Importa o componente de tabela
-import styles from './index.module.scss'; // Importa os estilos
+import { useNavigate, useLocation } from 'react-router-dom';
+import Tabela from '../../components/Tabela/Tabela';
+import styles from './index.module.scss';
 
 const Marcas = () => {
   const navigate = useNavigate();
-  const location = useLocation(); // Captura a localização da rota
+  const location = useLocation();
 
-  const cabecalhos = ['Marca'];
-  const [dados, setDados] = useState<string[][]>([]);
+  const cabecalhos = ['Marca', 'Ações'];
+  const [dados, setDados] = useState<any[]>([]);
 
   // Função para buscar as marcas da API
-  useEffect(() => {
-    const fetchMarcas = async () => {
-      try {
-        const resposta = await fetch('http://localhost:3000/marca');
-        if (!resposta.ok) {
-          throw new Error('Erro ao buscar marcas');
-        }
-
-        const marcas = await resposta.json();
-
-        // Transforma os dados para o formato aceito pela tabela
-        const dadosFormatados = marcas.map((marca: { descricao: string }) => [marca.descricao]);
-        setDados(dadosFormatados);
-      } catch (erro) {
-        console.error('Erro ao carregar marcas:', erro);
-        alert('Erro ao carregar marcas');
+  const fetchMarcas = async () => {
+    try {
+      const resposta = await fetch('http://localhost:3000/marca');
+      if (!resposta.ok) {
+        throw new Error('Erro ao buscar marcas');
       }
-    };
 
+      const marcas = await resposta.json();
+      const dadosFormatados = marcas.map((marca: { descricao: string, id: string }) => [
+        marca.descricao,
+        <>
+          <button 
+            className={`${styles.botao} ${styles.alterar}`} 
+            onClick={() => handleAlterar(marca.id)}>
+            Alterar
+          </button>
+          <button 
+            className={`${styles.botao} ${styles.excluir}`} 
+            onClick={() => handleExcluir(marca.id)}>
+            Excluir
+          </button>
+        </>
+      ]);
+      setDados(dadosFormatados);
+    } catch (erro) {
+      console.error('Erro ao carregar marcas:', erro);
+      alert('Erro ao carregar marcas');
+    }
+  };
+
+  useEffect(() => {
     fetchMarcas(); // Chama a função ao montar o componente ou ao mudar de rota
-  }, [location]); // Atualiza sempre que a rota mudar (ex: após voltar do cadastro)
+  }, [location]);
+
+  const handleAlterar = (id: string) => {
+    navigate(`/editar-marca/${id}`);
+  };
+
+  const handleExcluir = async (id: string) => {
+    const confirmacao = window.confirm('Tem certeza que deseja excluir esta marca?');
+    if (confirmacao) {
+      try {
+        // Fazendo a requisição de DELETE para a API com o ID correto
+        const resposta = await fetch(`http://localhost:3000/marca/${id}`, {
+          method: 'DELETE',
+        });
+        if (!resposta.ok) {
+          throw new Error('Erro ao excluir a marca');
+        }
+        alert('Marca excluída com sucesso!');
+        // Após a exclusão, recarrega a lista de marcas
+        fetchMarcas(); // Recarrega as marcas
+      } catch (erro) {
+        console.error('Erro ao excluir marca:', erro);
+        alert('Erro ao excluir a marca');
+      }
+    }
+  };
 
   return (
-    <div>
-      <Tabela cabecalhos={cabecalhos} dados={dados} /> {/* Renderiza a tabela com os dados */}
-
-      <div className={styles.botoesContainer}>
-        {/* Botão para ir ao cadastro de nova marca */}
-        <button className={styles.botao} onClick={() => navigate('/cadastro-marca')}>
-          Incluir
-        </button>
-
-        {/* Botões ainda não implementados */}
-        <button className={styles.botao}>Alterar</button>
-        <button className={styles.botao}>Excluir</button>
+    <div className={styles.container}>
+      <div className={styles.tabelaContainer}>
+        <div className={styles.botoesContainer}>
+          <button className={styles.botao} onClick={() => navigate('/cadastro-marca')}>
+            Incluir
+          </button>
+        </div>
+        <Tabela cabecalhos={cabecalhos} dados={dados} />
       </div>
     </div>
   );

@@ -1,8 +1,27 @@
+.container {
+  display: flex;
+  justify-content: center; // Centraliza horizontalmente
+  align-items: center; // Centraliza verticalmente
+  min-height: 100vh; // Garante que ocupe toda a altura da tela
+  padding: 20px;
+}
+
+.tabelaContainer {
+  width: 80%; // Define a largura da tabela (pode ser ajustado conforme necessário)
+  max-width: 1000px; // Define a largura máxima da tabela
+  overflow-x: auto; // Caso a tabela seja muito larga, ativa rolagem horizontal
+  background-color: #f9f9f9; // Cor de fundo para dar destaque
+  border-radius: 8px; // Bordas arredondadas
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); // Adiciona uma sombra suave
+  padding: 20px;
+}
+
 .botoesContainer {
   display: flex;
-  justify-content: flex-end; // Alinha os botões à direita
-  gap: 0.5rem;
+  justify-content: flex-start; // Alinha os botões à esquerda
+  gap: 1rem; // Aumenta o espaço entre os botões
   margin-top: 1.5rem;
+  width: 100%; // Garante que os botões ocupem toda a largura disponível
 }
 
 .botao {
@@ -13,9 +32,28 @@
   border-radius: 4px;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .botao:hover {
   background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+.botao.alterar {
+  background-color: #ffc107;
+}
+
+.botao.alterar:hover {
+  background-color: #e0a800;
+}
+
+.botao.excluir {
+  background-color: #dc3545;
+  margin-left: auto;  // Alinha o botão "Excluir" à direita
+}
+
+.botao.excluir:hover {
+  background-color: #c82333;
 }
