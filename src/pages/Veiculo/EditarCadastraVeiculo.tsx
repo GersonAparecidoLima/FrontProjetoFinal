@@ -2,32 +2,33 @@ import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import FormularioGenerico from '../../components/FormularioGenerico/FormularioGenerico';
 import styles from './CadastraVeiculo.module.scss';
-import { useNavigate, useParams } from 'react-router-dom';  // useParams para pegar o ID da URL
+import { useNavigate, useParams } from 'react-router-dom';
 
 const EditarCadastraVeiculo = () => {
   const formularioRef = useRef<{ submitarFormulario: () => void }>(null);
   const navigate = useNavigate();
-  const { id } = useParams();  // Usando useParams para obter o ID da URL
+  const { id } = useParams(); // Usando useParams para obter o ID da URL
 
-  const [ano, setAno] = useState('');
-  const [modelo, setModelo] = useState('');
-  const [marca, setMarca] = useState('');
-  const [valor, setValor] = useState('');
+  // Estado para os dados do veículo
+  const [ano, setAno] = useState<string>('');
+  const [modelo, setModelo] = useState<string>('');
+  const [marca, setMarca] = useState<string>(''); // Apenas o ID da marca como string
+  const [valor, setValor] = useState<string>('');
 
-  // Se um ID for passado pela URL, vamos buscar os dados desse veículo para editar
+  // Função para carregar os dados do veículo ao editar
   useEffect(() => {
     if (id) {
-      // Buscar dados do veículo pelo ID
       const fetchVeiculo = async () => {
         try {
           const resposta = await axios.get(`http://localhost:3000/veiculos/${id}`);
           const veiculo = resposta.data;
-          
+          console.log('Veículo carregado:', veiculo); // Adicionei para depuração
+
           // Preencher os campos com os dados do veículo
           setAno(veiculo.ano.toString());
           setModelo(veiculo.modelo);
-          setMarca(veiculo.marca.id.toString());
-          setValor(veiculo.valor.toString());
+          setMarca(veiculo.marca.id.toString());  // Marca como ID
+          setValor(veiculo.valor.toString());  // Valor como string
         } catch (erro) {
           console.error('Erro ao buscar dados do veículo:', erro);
           alert('Erro ao carregar os dados do veículo');
@@ -35,8 +36,14 @@ const EditarCadastraVeiculo = () => {
       };
       fetchVeiculo();
     }
-  }, [id]); // Recarregar os dados se o ID mudar
+  }, [id]);  // Recarregar os dados se o ID mudar
 
+  // Adicionando useEffect para verificar o estado atualizado
+  useEffect(() => {
+    console.log('Estado atualizado:', { ano, modelo, marca, valor });
+  }, [ano, modelo, marca, valor]);  // Esse efeito será chamado quando qualquer estado mudar
+
+  // Função para validar e alterar o ano
   const handleAnoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     if (/^\d*$/.test(value)) {
@@ -44,6 +51,7 @@ const EditarCadastraVeiculo = () => {
     }
   };
 
+  // Campos do formulário
   const campos = [
     { label: 'Marca', tipo: 'text', nome: 'marca', valor: marca, required: true, onChange: (e: any) => setMarca(e.target.value) },
     { label: 'Modelo', tipo: 'text', nome: 'modelo', valor: modelo, required: true, onChange: (e: any) => setModelo(e.target.value) },
@@ -51,35 +59,33 @@ const EditarCadastraVeiculo = () => {
     { label: 'Valor', tipo: 'text', nome: 'valor', valor: valor, required: true, onChange: (e: any) => setValor(e.target.value) },
   ];
 
+  // Função para cadastrar ou editar o veículo
   const handleCadastroVeiculo = async (dados: { [key: string]: string }) => {
     try {
+      const dadosVeiculo = {
+        marca: { id: parseInt(dados.marca) },  // Marca como ID numérico
+        modelo: dados.modelo,
+        ano: parseInt(dados.ano),
+        valor: parseFloat(dados.valor),
+      };
+
       if (id) {
-        // Caso o ID seja passado, estamos editando um veículo
-        const response = await axios.put(`http://localhost:3000/veiculos/${id}`, {
-          marca: { id: parseInt(dados.marca) },
-          modelo: dados.modelo,
-          ano: parseInt(dados.ano),
-          valor: parseFloat(dados.valor),
-        });
+        const response = await axios.put(`http://localhost:3000/veiculos/${id}`, dadosVeiculo);
         alert('Veículo atualizado com sucesso!');
         console.log('Veículo atualizado com sucesso:', response.data);
       } else {
-        // Caso contrário, estamos criando um novo veículo
-        const response = await axios.post('http://localhost:3000/veiculos', {
-          marca: { id: parseInt(dados.marca) },
-          modelo: dados.modelo,
-          ano: parseInt(dados.ano),
-          valor: parseFloat(dados.valor),
-        });
+        const response = await axios.post('http://localhost:3000/veiculos', dadosVeiculo);
         alert('Veículo cadastrado com sucesso!');
         console.log('Veículo cadastrado com sucesso:', response.data);
       }
       navigate('/veiculos');
     } catch (error) {
       console.error('Erro ao salvar veículo:', error);
+      alert('Erro ao salvar o veículo');
     }
   };
 
+  // Função para cancelar a edição ou cadastro e voltar à lista
   const handleCancelar = () => {
     navigate('/veiculos');
   };
@@ -87,13 +93,19 @@ const EditarCadastraVeiculo = () => {
   return (
     <div>
       <h2>{id ? 'Editar Veículo' : 'Cadastro de Veículo'}</h2>
-      <FormularioGenerico
-        campos={campos}
-        onSubmit={handleCadastroVeiculo}
-        tipoFormulario="cadastro"
-        exibirBotao={false}  // Oculta botão interno
-        ref={formularioRef}
-      />
+      
+      {/* Verificar estado do formulário antes de renderizar */}
+      {ano && modelo && marca && valor ? (
+        <FormularioGenerico
+          campos={campos}
+          onSubmit={handleCadastroVeiculo}
+          tipoFormulario="cadastro"
+          exibirBotao={false}  // Oculta botão interno
+          ref={formularioRef}
+        />
+      ) : (
+        <p>Carregando dados do veículo...</p> // Mensagem de carregamento
+      )}
 
       <div className={styles.botoesContainer}>
         <button
