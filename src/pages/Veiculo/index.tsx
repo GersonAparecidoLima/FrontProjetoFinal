@@ -1,105 +1,98 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Tabela from '../../components/Tabela/Tabela';
 import styles from './index.module.scss';
-import { useNavigate } from 'react-router-dom';
 
 const Veiculo = () => {
-  const [dados, setDados] = useState<string[][]>([]);
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // Adicionar "Valor" e "Ação" ao cabeçalho da tabela
   const cabecalhos = ['Marca ID', 'Modelo', 'Ano', 'Valor', 'Ação'];
+  const [dados, setDados] = useState<any[]>([]);
 
-  useEffect(() => {
-    // Requisição para buscar os veículos
-    axios.get('http://localhost:3000/veiculos')
-      .then(response => {
-        console.log(response.data); // Verifique a resposta para conferir os dados
-        const veiculos = response.data;
-        const dadosFormatados = veiculos.map((v: any) => [
-          v.marca?.id?.toString() || 'N/A', // Garantir que o valor não seja indefinido
-          v.modelo,
-          v.ano.toString(),
-          // Garantir que 'valor' seja um número
-          typeof v.valor === 'number' && !isNaN(v.valor) ? v.valor.toFixed(2) :
-          !isNaN(parseFloat(v.valor)) ? parseFloat(v.valor).toFixed(2) : 'N/A', // Tratar caso 'valor' seja string numérica
-          // Adicionar os botões Editar e Excluir
-          <div key={v.id}>
+  // Função para buscar os veículos da API
+  const fetchVeiculos = async () => {
+    try {
+      const resposta = await fetch('http://localhost:3000/veiculos');
+      if (!resposta.ok) {
+        throw new Error('Erro ao buscar veículos');
+      }
+
+      const veiculos = await resposta.json();
+
+      const dadosFormatados = veiculos.map((veiculo: { id: string, marca: { id: number }, modelo: string, ano: number, valor: any }) => {
+        // Verificação se 'valor' é um número antes de aplicar toFixed
+        const valor = typeof veiculo.valor === 'number' && !isNaN(veiculo.valor) 
+          ? veiculo.valor.toFixed(2) 
+          : 'N/A'; // Caso 'valor' não seja número, exibe 'N/A'
+
+        return [
+          veiculo.marca.id.toString() || 'N/A',
+          veiculo.modelo,
+          veiculo.ano.toString(),
+          valor,
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
             <button
-              className={styles.botao}
-              onClick={() => handleEditar(v.id)} // Editar (exemplo de id do veículo)
+              className={`${styles.botao} ${styles.alterar}`}
+              onClick={() => handleEditar(veiculo.id)}
             >
               Editar
             </button>
             <button
-              className={styles.botao}
-              onClick={() => handleExcluir(v.id)} // Excluir (exemplo de id do veículo)
+              className={`${styles.botao} ${styles.excluir}`}
+              onClick={() => handleExcluir(veiculo.id)}
             >
               Excluir
             </button>
           </div>
-        ]);
-        setDados(dadosFormatados);
-      })
-      .catch(error => {
-        console.error('Erro ao buscar veículos:', error);
+        ];
       });
-  }, []);
 
-  // Função para navegar para a tela de edição
+      setDados(dadosFormatados);
+    } catch (erro) {
+      console.error('Erro ao carregar veículos:', erro);
+      alert('Erro ao carregar veículos');
+    }
+  };
+
+  useEffect(() => {
+    fetchVeiculos();
+  }, [location]); // A dependência "location" garante que os dados sejam recarregados ao navegar
+
   const handleEditar = (id: string) => {
     navigate(`/editar-veiculo/${id}`);
   };
 
-  // Função para excluir o veículo
-  const handleExcluir = (id: string) => {
-    if (window.confirm('Você tem certeza que deseja excluir este veículo?')) {
-      axios.delete(`http://localhost:3000/veiculos/${id}`)
-        .then(() => {
-          // Atualizar a tabela após a exclusão
-          setDados(dados.filter((veiculo: any) => veiculo.id !== id));
-          alert('Veículo excluído com sucesso!');
-        })
-        .catch(error => {
-          console.error('Erro ao excluir veículo:', error);
+  const handleExcluir = async (id: string) => {
+    const confirmacao = window.confirm('Tem certeza que deseja excluir este veículo?');
+    if (confirmacao) {
+      try {
+        const resposta = await fetch(`http://localhost:3000/veiculos/${id}`, {
+          method: 'DELETE',
         });
+        if (!resposta.ok) {
+          throw new Error('Erro ao excluir o veículo');
+        }
+
+        alert('Veículo excluído com sucesso!');
+        fetchVeiculos(); // Recarrega os dados após exclusão
+      } catch (erro) {
+        console.error('Erro ao excluir veículo:', erro);
+        alert('Erro ao excluir o veículo');
+      }
     }
   };
 
   return (
-    <div>
-      {/* Renderizando a Tabela */}
-      <Tabela cabecalhos={cabecalhos} dados={dados} />
-
-      {/* Container para os botões de navegação */}
-      <div className={styles.botoesContainer}>
-        <button className={styles.botao} onClick={() => navigate('/cadastro-veiculo')}>
-          Incluir
-        </button>
+    <div className={styles.container}>
+      <div className={styles.tabelaContainer}>
+        <div className={styles.botoesContainer}>
+          <button className={styles.botao} onClick={() => navigate('/cadastro-veiculo')}>
+            Incluir
+          </button>
+        </div>
+        <Tabela cabecalhos={cabecalhos} dados={dados} />
       </div>
-
-      {/* Optional: Renderizar os botões fora da tabela, caso necessário */}
-      {/* 
-      <div>
-        {dados.map((item, index) => (
-          <div key={index}>
-            <button
-              className={styles.botao}
-              onClick={() => handleEditar(item[0])}
-            >
-              Editar
-            </button>
-            <button
-              className={styles.botao}
-              onClick={() => handleExcluir(item[0])}
-            >
-              Excluir
-            </button>
-          </div>
-        ))}
-      </div> 
-      */}
     </div>
   );
 };
