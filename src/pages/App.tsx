@@ -11,6 +11,7 @@ import CadastraVeiculo from './Veiculo/CadastraVeiculo';
 import Marcas from './Marcas';
 import CadastroMarca from './Marcas/CadastroMarca';
 import EditarCadastroMarca from './Marcas/EditarCadastroMarca';
+import EditarCadastraVeiculo from './Veiculo/EditarCadastraVeiculo';
 
 function App() {
   return (
@@ -27,6 +28,8 @@ function App() {
           <Route path="/veiculos" element={<Veiculo />} />
 
           <Route path="/cadastro-veiculo" element={<CadastraVeiculo />} />
+          <Route path="/editar-veiculo/:id" element={<EditarCadastraVeiculo />} />
+          
 
           <Route path="/marcas" element={<Marcas />} />
           <Route path="/cadastro" element={<Cadastro />} />

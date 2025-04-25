@@ -62,8 +62,9 @@ const Veiculo = () => {
   }, [location]); // A dependência "location" garante que os dados sejam recarregados ao navegar
 
   const handleEditar = (id: string) => {
-    navigate(`/editar-veiculo/${id}`);
+    navigate(`/editar-veiculo/${id}`);  // Agora passamos o id na URL
   };
+  
 
   const handleExcluir = async (id: string) => {
     const confirmacao = window.confirm('Tem certeza que deseja excluir este veículo?');
