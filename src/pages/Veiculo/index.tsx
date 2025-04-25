@@ -21,9 +21,11 @@ const Veiculo = () => {
       const veiculos = await resposta.json();
 
       const dadosFormatados = veiculos.map((veiculo: { id: string, marca: { id: number }, modelo: string, ano: number, valor: any }) => {
-        // Verificação se 'valor' é um número antes de aplicar toFixed
-        const valor = typeof veiculo.valor === 'number' && !isNaN(veiculo.valor) 
-          ? veiculo.valor.toFixed(2) 
+        // Garantir que 'valor' seja um número
+        const valor = typeof veiculo.valor === 'number' && !isNaN(veiculo.valor)
+          ? veiculo.valor.toFixed(2)
+          : !isNaN(parseFloat(veiculo.valor))
+          ? parseFloat(veiculo.valor).toFixed(2)
           : 'N/A'; // Caso 'valor' não seja número, exibe 'N/A'
 
         return [
