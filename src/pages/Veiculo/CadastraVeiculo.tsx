@@ -1,28 +1,60 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
+import axios from 'axios';
 import FormularioGenerico from '../../components/FormularioGenerico/FormularioGenerico';
 import styles from './CadastraVeiculo.module.scss';
+import { useNavigate } from 'react-router-dom';  // Importa useNavigate
 
 const CadastraVeiculo = () => {
-  // Referência para acionar o submit externo
   const formularioRef = useRef<{ submitarFormulario: () => void }>(null);
+  const navigate = useNavigate();  // Inicializa o hook useNavigate
+
+  // Estado para o campo ano
+  const [ano, setAno] = useState('');
+  const [modelo, setModelo] = useState('');
+  const [marca, setMarca] = useState('');
+  const [valor, setValor] = useState('');
+
+  // Função chamada ao digitar no campo "ano", garantindo que é um número
+  const handleAnoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    if (/^\d*$/.test(value)) {  // Verifica se é apenas um número
+      setAno(value);
+    }
+  };
 
   // Campos para o formulário de Cadastro de Veículo
   const campos = [
-    { label: 'Marca', tipo: 'text', nome: 'marca', valor: '', required: true },
-    { label: 'Modelo', tipo: 'text', nome: 'modelo', valor: '', required: true },
-    { label: 'Ano', tipo: 'number', nome: 'ano', valor: '', required: true },
-    { label: 'Valor', tipo: 'text', nome: 'valor', valor: '', required: true },
+    { label: 'Marca', tipo: 'text', nome: 'marca', valor: marca, required: true, onChange: (e: any) => setMarca(e.target.value) },
+    { label: 'Modelo', tipo: 'text', nome: 'modelo', valor: modelo, required: true, onChange: (e: any) => setModelo(e.target.value) },
+    { label: 'Ano', tipo: 'number', nome: 'ano', valor: ano, required: true, onChange: handleAnoChange },
+    { label: 'Valor', tipo: 'text', nome: 'valor', valor: valor, required: true, onChange: (e: any) => setValor(e.target.value) },
   ];
 
-  // Função que é chamada ao enviar o formulário
-  const handleCadastroVeiculo = (dados: { [key: string]: string }) => {
+  // Função para enviar os dados do formulário
+  const handleCadastroVeiculo = async (dados: { [key: string]: string }) => {
     console.log('Cadastro de Veículo:', dados);
-    // Aqui você pode enviar para uma API ou outro lugar
+
+    // Enviar os dados para a API
+    try {
+      const response = await axios.post('http://localhost:3000/veiculos', {
+        marca: { id: parseInt(dados.marca) },
+        modelo: dados.modelo,
+        ano: parseInt(dados.ano),
+        valor: parseFloat(dados.valor),
+      });
+      alert('Veículo cadastrado com sucesso: ');
+      console.log('Veículo cadastrado com sucesso:', response.data);
+      navigate('/veiculos');
+      // Aqui você pode redirecionar ou limpar os campos após o cadastro
+    } catch (error) {
+      console.error('Erro ao cadastrar veículo:', error);
+    }
   };
 
   // Função para cancelar o cadastro
   const handleCancelar = () => {
     console.log('Cadastro cancelado');
+    navigate('/veiculos');
     // Aqui você pode redirecionar, limpar campos, etc.
   };
 
@@ -35,7 +67,7 @@ const CadastraVeiculo = () => {
         onSubmit={handleCadastroVeiculo}
         tipoFormulario="cadastro"
         exibirBotao={false} // Oculta botão interno
-        ref={formularioRef} // Ref para acionar o submit externo
+        ref={formularioRef}
       />
 
       <div className={styles.botoesContainer}>

@@ -9,7 +9,7 @@ export default function Menu() {
     to: '/login'
   }, {
     label: 'Veículos',
-    to: '/veiculo'
+    to: '/veiculos'
   },{
     label: 'Marcas',
     to: '/marcas'
