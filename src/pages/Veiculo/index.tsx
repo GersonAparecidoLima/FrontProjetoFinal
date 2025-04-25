@@ -7,7 +7,7 @@ const Veiculo = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const cabecalhos = ['Marca ID', 'Modelo', 'Ano', 'Valor', 'Ação'];
+  const cabecalhos = ['Marca', 'Modelo', 'Ano', 'Valor', 'Ação'];
   const [dados, setDados] = useState<any[]>([]);
 
   // Função para buscar os veículos da API
@@ -20,7 +20,8 @@ const Veiculo = () => {
 
       const veiculos = await resposta.json();
 
-      const dadosFormatados = veiculos.map((veiculo: { id: string, marca: { id: number }, modelo: string, ano: number, valor: any }) => {
+      const dadosFormatados = veiculos.map((veiculo: { id: string, marca: { id: number; descricao: string }
+        , modelo: string, ano: number, valor: any }) => {
         // Garantir que 'valor' seja um número
         const valor = typeof veiculo.valor === 'number' && !isNaN(veiculo.valor)
           ? veiculo.valor.toFixed(2)
@@ -29,7 +30,7 @@ const Veiculo = () => {
           : 'N/A'; // Caso 'valor' não seja número, exibe 'N/A'
 
         return [
-          veiculo.marca.id.toString() || 'N/A',
+          veiculo.marca.descricao || 'N/A',
           veiculo.modelo,
           veiculo.ano.toString(),
           valor,
