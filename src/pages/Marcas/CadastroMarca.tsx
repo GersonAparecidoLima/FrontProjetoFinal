@@ -5,6 +5,7 @@ import FormularioGenerico from '../../components/FormularioGenerico/FormularioGe
 const CadastroMarca = () => {
   const navigate = useNavigate(); // Hook para navegação
 
+
   const campos = [
     {
       label: 'Marca',
@@ -18,6 +19,13 @@ const CadastroMarca = () => {
   const handleSubmit = async (dados: { [key: string]: string }) => {
     console.log('Dados enviados:', dados);
 
+    if (!dados.descricao || dados.descricao.trim().length < 3) {
+      //setErroModelo('A descrição da marca deve ter no mínimo 3 caracteres.');
+      alert('A descrição da marca deve ter no mínimo 3 caracteres.');
+      return;
+    }
+
+    
     try {
       const resposta = await fetch('http://localhost:3000/marca', {
         method: 'POST',

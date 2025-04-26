@@ -16,10 +16,15 @@ const CadastraVeiculo = () => {
 
   // Função chamada ao digitar no campo "ano", garantindo que é um número
   const handleAnoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+
     const value = event.target.value;
-    if (/^\d*$/.test(value)) {  // Verifica se é apenas um número
+
+    // Verifica se é um número inteiro positivo ou vazio (para permitir apagar)
+    if (/^\d*$/.test(value)) {
       setAno(value);
     }
+
   };
 
   // Campos para o formulário de Cadastro de Veículo
@@ -34,7 +39,20 @@ const CadastraVeiculo = () => {
   const handleCadastroVeiculo = async (dados: { [key: string]: string }) => {
     console.log('Cadastro de Veículo:', dados);
 
-    // Enviar os dados para a API
+      if (!dados.modelo || dados.modelo.trim().length < 2) {
+        //setErroModelo('O campo "Modelo" é obrigatório e deve conter pelo menos 2 caracteres.');
+        alert('O campo "Modelo" é obrigatório e deve conter pelo menos 2 caracteres.');
+        return;
+      }
+
+      const anoNumero = parseInt(dados.ano);
+      if (isNaN(anoNumero) || anoNumero <= 0) {
+        alert('O campo "Ano" deve ser um número positivo.');
+        return;
+      }
+      
+
+
     try {
       const response = await axios.post('http://localhost:3000/veiculos', {
         marca: { id: parseInt(dados.marca) },

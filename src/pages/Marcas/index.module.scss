@@ -7,7 +7,7 @@
   padding: 20px;
 }
 .tabelaContainer {
-  width: 80%; // Define a largura da tabela (pode ser ajustado conforme necessário)
+  width: 60%; // Define a largura da tabela (pode ser ajustado conforme necessário)
   max-width: 1000px; // Define a largura máxima da tabela
   overflow-x: auto; // Caso a tabela seja muito larga, ativa rolagem horizontal
   background-color: #f9f9f9; // Cor de fundo para dar destaque
@@ -44,18 +44,20 @@
 }
 
 .botao.alterar {
-  background-color: #ffc107;
+  background-color: #115293;
+  margin-left: auto; 
+  justify-content: flex-start;
 }
 
 .botao.alterar:hover {
-  background-color: #e0a800;
+  background-color: #115293;
 }
 
 .botao.excluir {
-  background-color: #dc3545;
+  background-color:#115293;
   margin-left: auto;  // Alinha o botão "Excluir" à direita
 }
 
 .botao.excluir:hover {
-  background-color: #c82333;
+  background-color: #115293;
 }

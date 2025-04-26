@@ -1,22 +1,56 @@
+.acoesContainer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
 .botoesContainer {
-    margin-top: 20px;
-    display: flex;
-    gap: 10px;
-    justify-content: flex-end; // ← agora sim, alinha à direita
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end; // já estava certo
+}
+
+.tabelaContainer {
+  width: 80%; // Define a largura da tabela (pode ser ajustado conforme necessário)
+  max-width: 1000px; // Define a largura máxima da tabela
+  overflow-x: auto; // Caso a tabela seja muito larga, ativa rolagem horizontal
+  background-color: #f9f9f9; // Cor de fundo para dar destaque
+  border-radius: 8px; // Bordas arredondadas
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); // Adiciona uma sombra suave
+  padding: 20px;
+  margin: 0 auto; // Centraliza horizontalmente
+}
+
+.botao {
+  border: 2px solid  #1976d2; // Borda visível
+  padding: 8px 16px;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #115293;
   }
-  
-  .botao {
-    border: 2px solid red;  // Adicionando uma borda visível para os botões
-    padding: 8px 16px;
-    background-color: #1976d2;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: background-color 0.3s ease;
-  
-    &:hover {
-      background-color: #115293;
-    }
-  }  
+}
+
+.botaoIncluir {
+  border: 2px solid  #1976d2; // Borda visível
+  padding: 8px 16px;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+  justify-content: flex-end; // Alinha os botões à direita
+
+  &:hover {
+    background-color: #115293;
+  }
+}

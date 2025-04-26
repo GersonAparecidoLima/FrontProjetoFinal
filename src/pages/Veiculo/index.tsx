@@ -34,15 +34,15 @@ const Veiculo = () => {
           veiculo.modelo,
           veiculo.ano.toString(),
           valor,
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+          <div className={styles.acoesContainer}>
             <button
-              className={`${styles.botao} ${styles.alterar}`}
+              className={`${styles.botao} `}
               onClick={() => handleEditar(veiculo.id)}
             >
               Editar
             </button>
             <button
-              className={`${styles.botao} ${styles.excluir}`}
+              className={`${styles.botao} `}
               onClick={() => handleExcluir(veiculo.id)}
             >
               Excluir
@@ -91,7 +91,7 @@ const Veiculo = () => {
     <div className={styles.container}>
       <div className={styles.tabelaContainer}>
         <div className={styles.botoesContainer}>
-          <button className={styles.botao} onClick={() => navigate('/cadastro-veiculo')}>
+          <button className={styles.botaoIncluir} onClick={() => navigate('/cadastro-veiculo')}>
             Incluir
           </button>
         </div>
