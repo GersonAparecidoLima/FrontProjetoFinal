@@ -1,12 +1,14 @@
+// FormularioGenerico.tsx
 import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import style from './FormularioGenerico.module.scss';
 
 interface Campo {
   label: string;
-  tipo: string;
+  tipo: string; // ex: 'text', 'email', 'select'
   nome: string;
   valor: string;
   required: boolean;
+  opcoes?: { label: string; valor: string }[]; // Adicionado para select
 }
 
 interface Props {
@@ -16,7 +18,6 @@ interface Props {
   exibirBotao?: boolean;
 }
 
-// Componente com forwardRef para permitir submit externo
 const FormularioGenerico = forwardRef(function FormularioGenerico(
   { campos, onSubmit, tipoFormulario, exibirBotao = true }: Props,
   ref
@@ -30,7 +31,7 @@ const FormularioGenerico = forwardRef(function FormularioGenerico(
 
   const [erros, setErros] = useState<Record<string, string>>({});
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setDadosFormulario((prevState) => ({
       ...prevState,
@@ -58,7 +59,6 @@ const FormularioGenerico = forwardRef(function FormularioGenerico(
     }
   };
 
-  // Expõe a função de submit para o componente pai via ref
   useImperativeHandle(ref, () => ({
     submitarFormulario: () => {
       if (validarFormulario()) {
@@ -72,14 +72,33 @@ const FormularioGenerico = forwardRef(function FormularioGenerico(
       {campos.map((campo) => (
         <div key={campo.nome} className={style.inputContainer}>
           <label htmlFor={campo.nome}>{campo.label}</label>
-          <input
-            type={campo.tipo}
-            name={campo.nome}
-            id={campo.nome}
-            value={dadosFormulario[campo.nome]}
-            onChange={handleInputChange}
-            required={campo.required}
-          />
+
+          {campo.tipo === 'select' ? (
+            <select
+              name={campo.nome}
+              id={campo.nome}
+              value={dadosFormulario[campo.nome]}
+              onChange={handleInputChange}
+              required={campo.required}
+            >
+              <option value="">Selecione</option>
+              {campo.opcoes?.map((opcao) => (
+                <option key={opcao.valor} value={opcao.valor}>
+                  {opcao.label}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <input
+              type={campo.tipo}
+              name={campo.nome}
+              id={campo.nome}
+              value={dadosFormulario[campo.nome]}
+              onChange={handleInputChange}
+              required={campo.required}
+            />
+          )}
+
           {erros[campo.nome] && <div className={style.popError}>{erros[campo.nome]}</div>}
         </div>
       ))}

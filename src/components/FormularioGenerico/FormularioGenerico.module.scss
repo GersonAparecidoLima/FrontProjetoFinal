@@ -9,6 +9,25 @@
 }
 
 .inputContainer {
+  display: flex;
+  flex-direction: column; // mude para row se quiser tudo lado a lado
+  margin-bottom: 1rem;
+}
+
+.inputContainer label {
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.inputContainer select,
+.inputContainer input {
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+
+
+.inputContainer {
   margin-bottom: 15px;
 }
 
