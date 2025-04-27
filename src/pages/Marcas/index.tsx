@@ -75,6 +75,7 @@ const Marcas = () => {
 
   return (
     <div className={styles.container}>
+       <h2>Lista Marca</h2>
       <div className={styles.tabelaContainer}>
         <div className={styles.botoesContainer}>
           <button className={styles.botao} onClick={() => navigate('/cadastro-marca')}>

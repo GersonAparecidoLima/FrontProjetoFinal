@@ -89,6 +89,7 @@ const Veiculo = () => {
 
   return (
     <div className={styles.container}>
+      <h2>Lista Veículo</h2>
       <div className={styles.tabelaContainer}>
         <div className={styles.botoesContainer}>
           <button className={styles.botaoIncluir} onClick={() => navigate('/cadastro-veiculo')}>

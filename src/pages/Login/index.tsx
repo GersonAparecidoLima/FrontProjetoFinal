@@ -14,6 +14,7 @@ const Login = () => {
 
   return (
     <div>
+       <h2>Login</h2>
       <FormularioGenerico campos={campos} onSubmit={handleLogin} tipoFormulario="login" />
     </div>
   );

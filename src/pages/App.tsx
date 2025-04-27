@@ -12,6 +12,7 @@ import Marcas from './Marcas';
 import CadastroMarca from './Marcas/CadastroMarca';
 import EditarCadastroMarca from './Marcas/EditarCadastroMarca';
 import EditarCadastraVeiculo from './Veiculo/EditarCadastraVeiculo';
+import Tarefa from './Tarefa/Tarefa';
 
 function App() {
   return (
@@ -38,6 +39,9 @@ function App() {
           <Route path="/sair" element={<div>Em breve: Página de Veículo</div>} />  
           <Route path="/editar-marca/:id" element={<EditarCadastroMarca />} />
           <Route path="/editar/:id" element={<EditarCadastro />} />
+
+          <Route path="/tarefa" element={<Tarefa />} />
+
         </Routes>
       </div>
     </Router>
