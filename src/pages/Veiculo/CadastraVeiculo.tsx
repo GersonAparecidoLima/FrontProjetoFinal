@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import axios from 'axios';
 import FormularioGenerico from '../../components/FormularioGenerico/FormularioGenerico';
 import styles from './CadastraVeiculo.module.scss';
@@ -8,6 +8,29 @@ const CadastraVeiculo = () => {
   const formularioRef = useRef<{ submitarFormulario: () => void }>(null);
   const navigate = useNavigate();
 
+  // Estado para armazenar as marcas
+  const [opcoesMarca, setOpcoesMarca] = useState<{ label: string, valor: string }[]>([]);
+
+  // Buscando as marcas ao carregar o componente
+  useEffect(() => {
+    const fetchMarcas = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/marca');
+        // Mapeando a resposta da API para o formato esperado
+        const marcasFormatadas = response.data.map((marca: { id: number, descricao: string }) => ({
+          label: marca.descricao,  // Usando a 'descricao' como o texto da opção
+          valor: marca.id.toString(), // Convertendo o id para string para manter a consistência
+        }));
+        setOpcoesMarca(marcasFormatadas);
+      } catch (error) {
+        console.error('Erro ao buscar marcas:', error);
+        alert('Erro ao carregar marcas.');
+      }
+    };
+
+    fetchMarcas();
+  }, []);
+
   const campos = [
     {
       label: 'Marca do Veículo',
@@ -15,12 +38,7 @@ const CadastraVeiculo = () => {
       nome: 'marca',
       valor: '',
       required: true,
-      opcoes: [
-        { label: 'Chevrolet', valor: '1' }, // IDs como string (supondo que o backend espera isso)
-        { label: 'Fiat', valor: '2' },
-        { label: 'Volkswagen', valor: '3' },
-        { label: 'Toyota', valor: '4' },
-      ],
+      opcoes: opcoesMarca, // Aqui as opções de marcas são dinâmicas
     },
     {
       label: 'Modelo',
