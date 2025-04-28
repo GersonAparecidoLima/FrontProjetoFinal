@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../services/api'; // <-- Usa o Axios com token JWT
 import FormularioGenerico from '../../components/FormularioGenerico/FormularioGenerico';
 import styles from './CadastraVeiculo.module.scss';
 import { useNavigate } from 'react-router-dom';
@@ -7,19 +7,15 @@ import { useNavigate } from 'react-router-dom';
 const CadastraVeiculo = () => {
   const formularioRef = useRef<{ submitarFormulario: () => void }>(null);
   const navigate = useNavigate();
-
-  // Estado para armazenar as marcas
   const [opcoesMarca, setOpcoesMarca] = useState<{ label: string, valor: string }[]>([]);
 
-  // Buscando as marcas ao carregar o componente
   useEffect(() => {
     const fetchMarcas = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/marca');
-        // Mapeando a resposta da API para o formato esperado
+        const response = await api.get('/marca'); // <-- Token enviado automaticamente
         const marcasFormatadas = response.data.map((marca: { id: number, descricao: string }) => ({
-          label: marca.descricao,  // Usando a 'descricao' como o texto da opção
-          valor: marca.id.toString(), // Convertendo o id para string para manter a consistência
+          label: marca.descricao,
+          valor: marca.id.toString(),
         }));
         setOpcoesMarca(marcasFormatadas);
       } catch (error) {
@@ -38,7 +34,7 @@ const CadastraVeiculo = () => {
       nome: 'marca',
       valor: '',
       required: true,
-      opcoes: opcoesMarca, // Aqui as opções de marcas são dinâmicas
+      opcoes: opcoesMarca,
     },
     {
       label: 'Modelo',
@@ -64,8 +60,6 @@ const CadastraVeiculo = () => {
   ];
 
   const handleCadastroVeiculo = async (dados: { [key: string]: string }) => {
-    console.log('Cadastro de Veículo:', dados);
-
     if (!dados.modelo || dados.modelo.trim().length < 2) {
       alert('O campo "Modelo" é obrigatório e deve conter pelo menos 2 caracteres.');
       return;
@@ -84,12 +78,12 @@ const CadastraVeiculo = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:3000/veiculos', {
+      const response = await api.post('/veiculos', {
         marca: { id: parseInt(dados.marca) },
         modelo: dados.modelo,
         ano: anoNumero,
         valor: valorNumero,
-      });
+      }); // <-- Token JWT incluído
 
       alert('Veículo cadastrado com sucesso!');
       console.log('Veículo cadastrado:', response.data);
