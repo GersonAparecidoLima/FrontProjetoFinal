@@ -1,53 +1,44 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import Tabela from '../../components/Tabela/Tabela';
 import styles from './index.module.scss';
 
-const Veiculo = () => {
-  const navigate = useNavigate();
+// Define o tipo das linhas da tabela (quatro colunas: marca, modelo, ano, valor)
+type VeiculoTabela = [string, string, string, string];
+
+const VeiculoPublico = () => {
   const location = useLocation();
+  const cabecalhos = ['Marca', 'Modelo', 'Ano', 'Valor'];
+  const [dados, setDados] = useState<VeiculoTabela[]>([]);
 
-  const cabecalhos = ['Marca', 'Modelo', 'Ano', 'Valor', 'Ação'];
-  const [dados, setDados] = useState<any[]>([]);
-
-  // Função para buscar os veículos da API
+  // Função para buscar os veículos da API pública
   const fetchVeiculos = async () => {
     try {
-      const resposta = await fetch('http://localhost:3000/veiculos');
+      const resposta = await fetch('http://localhost:3000/veiculos/publico');
       if (!resposta.ok) {
         throw new Error('Erro ao buscar veículos');
       }
 
       const veiculos = await resposta.json();
 
-      const dadosFormatados = veiculos.map((veiculo: { id: string, marca: { id: number; descricao: string }
-        , modelo: string, ano: number, valor: any }) => {
-        // Garantir que 'valor' seja um número
+      const dadosFormatados: VeiculoTabela[] = veiculos.map((veiculo: {
+        id: string;
+        marca: { id: number; descricao: string };
+        modelo: string;
+        ano: number;
+        valor: any;
+      }) => {
         const valor = typeof veiculo.valor === 'number' && !isNaN(veiculo.valor)
           ? veiculo.valor.toFixed(2)
           : !isNaN(parseFloat(veiculo.valor))
           ? parseFloat(veiculo.valor).toFixed(2)
-          : 'N/A'; // Caso 'valor' não seja número, exibe 'N/A'
+          : 'N/A';
 
         return [
-          veiculo.marca.descricao || 'N/A',
+          veiculo.marca?.descricao || 'N/A',
           veiculo.modelo,
           veiculo.ano.toString(),
-          valor,
-          <div className={styles.acoesContainer}>
-            <button
-              className={`${styles.botao} `}
-              onClick={() => handleEditar(veiculo.id)}
-            >
-              Editar
-            </button>
-            <button
-              className={`${styles.botao} `}
-              onClick={() => handleExcluir(veiculo.id)}
-            >
-              Excluir
-            </button>
-          </div>
+          `R$ ${valor}`,
         ];
       });
 
@@ -60,46 +51,16 @@ const Veiculo = () => {
 
   useEffect(() => {
     fetchVeiculos();
-  }, [location]); // A dependência "location" garante que os dados sejam recarregados ao navegar
-
-  const handleEditar = (id: string) => {
-    navigate(`/editar-veiculo/${id}`);  // Agora passamos o id na URL
-  };
-  
-
-  const handleExcluir = async (id: string) => {
-    const confirmacao = window.confirm('Tem certeza que deseja excluir este veículo?');
-    if (confirmacao) {
-      try {
-        const resposta = await fetch(`http://localhost:3000/veiculos/${id}`, {
-          method: 'DELETE',
-        });
-        if (!resposta.ok) {
-          throw new Error('Erro ao excluir o veículo');
-        }
-
-        alert('Veículo excluído com sucesso!');
-        fetchVeiculos(); // Recarrega os dados após exclusão
-      } catch (erro) {
-        console.error('Erro ao excluir veículo:', erro);
-        alert('Erro ao excluir o veículo');
-      }
-    }
-  };
+  }, [location]); // Recarrega os dados sempre que a rota mudar
 
   return (
     <div className={styles.container}>
       <h2>Lista Veículo</h2>
       <div className={styles.tabelaContainer}>
-        <div className={styles.botoesContainer}>
-          <button className={styles.botaoIncluir} onClick={() => navigate('/cadastro-veiculo')}>
-            Incluir
-          </button>
-        </div>
         <Tabela cabecalhos={cabecalhos} dados={dados} />
       </div>
     </div>
   );
 };
 
-export default Veiculo;
+export default VeiculoPublico;

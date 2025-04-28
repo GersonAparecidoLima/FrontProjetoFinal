@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Tabela from '../../components/Tabela/Tabela';
 import styles from './index.module.scss';
-import api from '../../services/api'; // <-- Importa o Axios com o token configurado
+import api from '../../services/api';
+import { AxiosError } from 'axios';
 
 const Veiculo = () => {
   const navigate = useNavigate();
@@ -11,10 +12,9 @@ const Veiculo = () => {
   const cabecalhos = ['Marca', 'Modelo', 'Ano', 'Valor', 'Ação'];
   const [dados, setDados] = useState<any[]>([]);
 
-  // Função para buscar os veículos da API
   const fetchVeiculos = async () => {
     try {
-      const resposta = await api.get('/veiculos'); // <-- Requisição com Authorization
+      const resposta = await api.get('/veiculos');
       const veiculos = resposta.data;
 
       const dadosFormatados = veiculos.map((veiculo: {
@@ -35,15 +35,15 @@ const Veiculo = () => {
           veiculo.modelo,
           veiculo.ano.toString(),
           valor,
-          <div className={styles.acoesContainer}>
+          <div className={styles.acoesContainer} key={veiculo.id}>
             <button
-              className={`${styles.botao}`}
+              className={styles.botao}
               onClick={() => handleEditar(veiculo.id)}
             >
               Editar
             </button>
             <button
-              className={`${styles.botao}`}
+              className={styles.botao}
               onClick={() => handleExcluir(veiculo.id)}
             >
               Excluir
@@ -53,9 +53,15 @@ const Veiculo = () => {
       });
 
       setDados(dadosFormatados);
-    } catch (erro) {
-      console.error('Erro ao carregar veículos:', erro);
-      alert('Erro ao carregar veículos');
+    } catch (erro: unknown) {
+      const axiosError = erro as AxiosError;
+
+      if (axiosError.response?.status === 401) {
+               navigate('/veiculos/publico');
+      } else {
+        console.error('Erro ao carregar veículos:', axiosError);
+        alert('Erro ao carregar veículos');
+      }
     }
   };
 
@@ -71,12 +77,18 @@ const Veiculo = () => {
     const confirmacao = window.confirm('Tem certeza que deseja excluir este veículo?');
     if (confirmacao) {
       try {
-        await api.delete(`/veiculos/${id}`); // <-- Requisição com Authorization
+        await api.delete(`/veiculos/${id}`);
         alert('Veículo excluído com sucesso!');
         fetchVeiculos();
-      } catch (erro) {
-        console.error('Erro ao excluir veículo:', erro);
-        alert('Erro ao excluir o veículo');
+      } catch (erro: unknown) {
+        const axiosError = erro as AxiosError;
+
+        if (axiosError.response?.status === 401) {
+          navigate('/veiculos/publico');
+        } else {
+          console.error('Erro ao excluir veículo:', axiosError);
+          alert('Erro ao excluir o veículo');
+        }
       }
     }
   };
