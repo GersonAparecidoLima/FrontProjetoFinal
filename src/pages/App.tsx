@@ -13,6 +13,7 @@ import CadastroMarca from './Marcas/CadastroMarca';
 import EditarCadastroMarca from './Marcas/EditarCadastroMarca';
 import EditarCadastraVeiculo from './Veiculo/EditarCadastraVeiculo';
 import Tarefa from './Tarefa/Tarefa';
+import ListaUsuario from './Cadastro/ListaUsuario';
 
 function App() {
   return (
@@ -24,22 +25,17 @@ function App() {
         <Routes>
           <Route path="/" element={<Inicio />} />
           <Route path="/login" element={<Login />} />
-          
-
           <Route path="/veiculos" element={<Veiculo />} />
-
           <Route path="/cadastro-veiculo" element={<CadastraVeiculo />} />
           <Route path="/editar-veiculo/:id" element={<EditarCadastraVeiculo />} />
-          
-
           <Route path="/marcas" element={<Marcas />} />
           <Route path="/cadastro" element={<Cadastro />} />
+          <Route path="/lista-usuario" element={<ListaUsuario />} />
           <Route path="/cadastro-marca" element={<CadastroMarca />} />
           <Route path="/dashboard" element={<div>Em breve: Página de Veículo</div>} />
           <Route path="/sair" element={<div>Em breve: Página de Veículo</div>} />  
           <Route path="/editar-marca/:id" element={<EditarCadastroMarca />} />
           <Route path="/editar/:id" element={<EditarCadastro />} />
-
           <Route path="/tarefa" element={<Tarefa />} />
 
         </Routes>

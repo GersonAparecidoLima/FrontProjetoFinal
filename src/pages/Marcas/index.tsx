@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Tabela from '../../components/Tabela/Tabela';
 import styles from './index.module.scss';
+import api from '../../services/api'; // Importa o client com token JWT
 
 const Marcas = () => {
   const navigate = useNavigate();
@@ -10,17 +11,13 @@ const Marcas = () => {
   const cabecalhos = ['Marca', 'Ações'];
   const [dados, setDados] = useState<any[]>([]);
 
-  // Função para buscar as marcas da API
+  // Busca as marcas da API protegida
   const fetchMarcas = async () => {
     try {
-      const resposta = await fetch('http://localhost:3000/marca');
-      if (!resposta.ok) {
-        throw new Error('Erro ao buscar marcas');
-      }
+      const resposta = await api.get('/marca'); // Envia Authorization: Bearer <token>
+      const marcas = resposta.data;
 
-      const marcas = await resposta.json();
-
-      const dadosFormatados = marcas.map((marca: { descricao: string, id: string }) => [
+      const dadosFormatados = marcas.map((marca: { descricao: string; id: string }) => [
         marca.descricao,
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
           <button
@@ -57,15 +54,9 @@ const Marcas = () => {
     const confirmacao = window.confirm('Tem certeza que deseja excluir esta marca?');
     if (confirmacao) {
       try {
-        const resposta = await fetch(`http://localhost:3000/marca/${id}`, {
-          method: 'DELETE',
-        });
-        if (!resposta.ok) {
-          throw new Error('Erro ao excluir a marca');
-        }
-
+        await api.delete(`/marca/${id}`); // Envia Authorization: Bearer <token>
         alert('Marca excluída com sucesso!');
-        fetchMarcas(); // Recarrega os dados após exclusão
+        fetchMarcas(); // Atualiza lista após exclusão
       } catch (erro) {
         console.error('Erro ao excluir marca:', erro);
         alert('Erro ao excluir a marca');
@@ -74,9 +65,9 @@ const Marcas = () => {
   };
 
   return (
-    <div className={styles.container}>   
+    <div className={styles.container}>
       <div className={styles.tabelaContainer}>
-      <h2>Lista Marca</h2>
+        <h2>Lista Marca</h2>
         <div className={styles.botoesContainer}>
           <button className={styles.botao} onClick={() => navigate('/cadastro-marca')}>
             Incluir
