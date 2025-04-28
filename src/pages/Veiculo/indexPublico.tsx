@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Tabela from '../../components/Tabela/Tabela';
 import styles from './index.module.scss';
-import api from '../../services/api'; // <-- Importa o Axios com o token configurado
 
 const Veiculo = () => {
   const navigate = useNavigate();
@@ -14,21 +13,21 @@ const Veiculo = () => {
   // Função para buscar os veículos da API
   const fetchVeiculos = async () => {
     try {
-      const resposta = await api.get('/veiculos'); // <-- Requisição com Authorization
-      const veiculos = resposta.data;
+      const resposta = await fetch('http://localhost:3000/veiculos');
+      if (!resposta.ok) {
+        throw new Error('Erro ao buscar veículos');
+      }
 
-      const dadosFormatados = veiculos.map((veiculo: {
-        id: string,
-        marca: { id: number; descricao: string },
-        modelo: string,
-        ano: number,
-        valor: any
-      }) => {
+      const veiculos = await resposta.json();
+
+      const dadosFormatados = veiculos.map((veiculo: { id: string, marca: { id: number; descricao: string }
+        , modelo: string, ano: number, valor: any }) => {
+        // Garantir que 'valor' seja um número
         const valor = typeof veiculo.valor === 'number' && !isNaN(veiculo.valor)
           ? veiculo.valor.toFixed(2)
           : !isNaN(parseFloat(veiculo.valor))
           ? parseFloat(veiculo.valor).toFixed(2)
-          : 'N/A';
+          : 'N/A'; // Caso 'valor' não seja número, exibe 'N/A'
 
         return [
           veiculo.marca.descricao || 'N/A',
@@ -37,13 +36,13 @@ const Veiculo = () => {
           valor,
           <div className={styles.acoesContainer}>
             <button
-              className={`${styles.botao}`}
+              className={`${styles.botao} `}
               onClick={() => handleEditar(veiculo.id)}
             >
               Editar
             </button>
             <button
-              className={`${styles.botao}`}
+              className={`${styles.botao} `}
               onClick={() => handleExcluir(veiculo.id)}
             >
               Excluir
@@ -61,19 +60,26 @@ const Veiculo = () => {
 
   useEffect(() => {
     fetchVeiculos();
-  }, [location]);
+  }, [location]); // A dependência "location" garante que os dados sejam recarregados ao navegar
 
   const handleEditar = (id: string) => {
-    navigate(`/editar-veiculo/${id}`);
+    navigate(`/editar-veiculo/${id}`);  // Agora passamos o id na URL
   };
+  
 
   const handleExcluir = async (id: string) => {
     const confirmacao = window.confirm('Tem certeza que deseja excluir este veículo?');
     if (confirmacao) {
       try {
-        await api.delete(`/veiculos/${id}`); // <-- Requisição com Authorization
+        const resposta = await fetch(`http://localhost:3000/veiculos/${id}`, {
+          method: 'DELETE',
+        });
+        if (!resposta.ok) {
+          throw new Error('Erro ao excluir o veículo');
+        }
+
         alert('Veículo excluído com sucesso!');
-        fetchVeiculos();
+        fetchVeiculos(); // Recarrega os dados após exclusão
       } catch (erro) {
         console.error('Erro ao excluir veículo:', erro);
         alert('Erro ao excluir o veículo');
