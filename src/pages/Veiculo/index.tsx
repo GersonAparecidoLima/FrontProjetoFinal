@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Tabela from '../../components/Tabela/Tabela';
 import styles from './index.module.scss';
-import api from '../../services/api';
 import { AxiosError } from 'axios';
+import VeiculoService from '../../services/veiculo.service';
+
 
 const Veiculo = () => {
   const navigate = useNavigate();
@@ -14,24 +15,18 @@ const Veiculo = () => {
 
   const fetchVeiculos = async () => {
     try {
-      const resposta = await api.get('/veiculos');
-      const veiculos = resposta.data;
+      const veiculos = await VeiculoService.listarTodos();
 
-      const dadosFormatados = veiculos.map((veiculo: {
-        id: string,
-        marca: { id: number; descricao: string },
-        modelo: string,
-        ano: number,
-        valor: any
-      }) => {
-        const valor = typeof veiculo.valor === 'number' && !isNaN(veiculo.valor)
-          ? veiculo.valor.toFixed(2)
-          : !isNaN(parseFloat(veiculo.valor))
-          ? parseFloat(veiculo.valor).toFixed(2)
-          : 'N/A';
+      const dadosFormatados = veiculos.map((veiculo) => {
+        const valor =
+          typeof veiculo.valor === 'number' && !isNaN(veiculo.valor)
+            ? veiculo.valor.toFixed(2)
+            : !isNaN(parseFloat(veiculo.valor as string))
+            ? parseFloat(veiculo.valor as string).toFixed(2)
+            : 'N/A';
 
         return [
-          veiculo.marca.descricao || 'N/A',
+          veiculo.marca?.descricao || 'N/A',
           veiculo.modelo,
           veiculo.ano.toString(),
           valor,
@@ -55,9 +50,8 @@ const Veiculo = () => {
       setDados(dadosFormatados);
     } catch (erro: unknown) {
       const axiosError = erro as AxiosError;
-
       if (axiosError.response?.status === 401) {
-               navigate('/veiculos/publico');
+        navigate('/veiculos/publico');
       } else {
         console.error('Erro ao carregar veículos:', axiosError);
         alert('Erro ao carregar veículos');
@@ -77,12 +71,11 @@ const Veiculo = () => {
     const confirmacao = window.confirm('Tem certeza que deseja excluir este veículo?');
     if (confirmacao) {
       try {
-        await api.delete(`/veiculos/${id}`);
+        await VeiculoService.excluir(id);
         alert('Veículo excluído com sucesso!');
         fetchVeiculos();
       } catch (erro: unknown) {
         const axiosError = erro as AxiosError;
-
         if (axiosError.response?.status === 401) {
           navigate('/veiculos/publico');
         } else {
@@ -98,7 +91,10 @@ const Veiculo = () => {
       <h2>Lista Veículo</h2>
       <div className={styles.tabelaContainer}>
         <div className={styles.botoesContainer}>
-          <button className={styles.botaoIncluir} onClick={() => navigate('/cadastro-veiculo')}>
+          <button
+            className={styles.botaoIncluir}
+            onClick={() => navigate('/cadastro-veiculo')}
+          >
             Incluir
           </button>
         </div>
