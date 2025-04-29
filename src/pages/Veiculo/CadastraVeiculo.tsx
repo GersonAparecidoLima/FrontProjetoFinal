@@ -1,19 +1,20 @@
 import React, { useRef, useState, useEffect } from 'react';
-import api from '../../services/api'; // <-- Usa o Axios com token JWT
 import FormularioGenerico from '../../components/FormularioGenerico/FormularioGenerico';
 import styles from './CadastraVeiculo.module.scss';
 import { useNavigate } from 'react-router-dom';
+import VeiculoService from '../../services/veiculo.service';
+import MarcaService from '../../services/marca.service';
 
 const CadastraVeiculo = () => {
   const formularioRef = useRef<{ submitarFormulario: () => void }>(null);
   const navigate = useNavigate();
-  const [opcoesMarca, setOpcoesMarca] = useState<{ label: string, valor: string }[]>([]);
+  const [opcoesMarca, setOpcoesMarca] = useState<{ label: string; valor: string }[]>([]);
 
   useEffect(() => {
     const fetchMarcas = async () => {
       try {
-        const response = await api.get('/marca'); // <-- Token enviado automaticamente
-        const marcasFormatadas = response.data.map((marca: { id: number, descricao: string }) => ({
+        const marcas = await MarcaService.listarTodas();
+        const marcasFormatadas = marcas.map((marca) => ({
           label: marca.descricao,
           valor: marca.id.toString(),
         }));
@@ -78,15 +79,14 @@ const CadastraVeiculo = () => {
     }
 
     try {
-      const response = await api.post('/veiculos', {
-        marca: { id: parseInt(dados.marca) },
+      await VeiculoService.cadastrar({
+        marcaId: parseInt(dados.marca),
         modelo: dados.modelo,
         ano: anoNumero,
         valor: valorNumero,
-      }); // <-- Token JWT incluído
+      });
 
       alert('Veículo cadastrado com sucesso!');
-      console.log('Veículo cadastrado:', response.data);
       navigate('/veiculos');
     } catch (error) {
       console.error('Erro ao cadastrar veículo:', error);

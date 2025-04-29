@@ -43,9 +43,6 @@ const VeiculoService = {
 
 
 
-
-
-
 // Busca por ID (para edição)
 buscarPorId: async (id: string): Promise<Veiculo> => {
   const response = await api.get<Veiculo>(`/veiculos/${id}`);
