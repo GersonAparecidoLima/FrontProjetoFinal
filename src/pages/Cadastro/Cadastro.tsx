@@ -1,54 +1,94 @@
+// src/pages/Cadastro/Cadastro.tsx
+
 import React, { useState } from 'react';
-import style from './Cadastro.module.scss';
-import FormularioGenerico from '../../components/FormularioGenerico/FormularioGenerico';
+import { useNavigate } from 'react-router-dom';
 import UsuarioService from '../../services/usuario.service';
 
-
-function Cadastro() {
-  const [sucesso, setSucesso] = useState('');
+const Cadastro = () => {
+  const [dados, setDados] = useState({
+    nome: '',
+    email: '',
+    senha: '',
+  });
   const [erro, setErro] = useState('');
+  const [sucesso, setSucesso] = useState('');
+  const navigate = useNavigate();
 
   async function handleSubmit(dados: { [key: string]: string }) {
     try {
-      const resultado = await UsuarioService.cadastrarUsuario({
-
+      const resultado = await UsuarioService.cadastrar({
         nome: dados.nome,
         email: dados.email,
-        senha: dados.senha,
+        senha: dados.senha, // Certifique-se de passar a senha se necessário
       });
-
-      console.log('Usuário cadastrado com sucesso:', resultado);
-      
-      setSucesso('Usuário cadastrado com sucesso!');
-
+      setSucesso(resultado.mensagem || 'Usuário cadastrado com sucesso!');
       setErro('');
+      setTimeout(() => {
+        navigate('/lista-usuario');
+      }, 1000);
     } catch (error) {
-      console.error('Erro:', error);
-      setErro('Falha ao cadastrar usuário. Tente novamente.');
+      if (error instanceof Error) {
+        setErro(error.message);
+      } else {
+        setErro('Erro desconhecido');
+      }
       setSucesso('');
     }
   }
 
-  const campos = [
-    { label: 'Nome', tipo: 'text', nome: 'nome', valor: '', required: true },
-    { label: 'Email', tipo: 'email', nome: 'email', valor: '', required: true },
-    { label: 'Senha', tipo: 'password', nome: 'senha', valor: '', required: true },
-  ];
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setDados({ ...dados, [name]: value });
+  };
 
   return (
-    <div className={style.cadastro}>
-      <h2>Cadastro de Usuário</h2>
+    <div>
+      <h2>Cadastrar Usuário</h2>
 
-      {sucesso && <p className={style.sucesso}>{sucesso}</p>}
-      {erro && <p className={style.erro}>{erro}</p>}
+      {sucesso && <p>{sucesso}</p>}
+      {erro && <p>{erro}</p>}
 
-      <FormularioGenerico 
-        campos={campos} 
-        onSubmit={handleSubmit} 
-        tipoFormulario="cadastro" 
-      />
+      <form onSubmit={(e) => { e.preventDefault(); handleSubmit(dados); }}>
+        <div>
+          <label htmlFor="nome">Nome</label>
+          <input
+            type="text"
+            id="nome"
+            name="nome"
+            value={dados.nome}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div>
+          <label htmlFor="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={dados.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div>
+          <label htmlFor="senha">Senha</label>
+          <input
+            type="password"
+            id="senha"
+            name="senha"
+            value={dados.senha}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <button type="submit">Cadastrar</button>
+      </form>
     </div>
   );
-}
+};
 
 export default Cadastro;

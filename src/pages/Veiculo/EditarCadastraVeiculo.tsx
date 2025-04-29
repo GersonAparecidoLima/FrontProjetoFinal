@@ -21,7 +21,7 @@ const EditarCadastraVeiculo = () => {
           const veiculo = await VeiculoService.buscarPorId(id);
           setAno(veiculo.ano.toString());
           setModelo(veiculo.modelo);
-          setMarca(veiculo.marca.id.toString());
+          setMarca(veiculo.marca.descricao.toString());
           setValor(veiculo.valor.toString());
         } catch (erro) {
           console.error('Erro ao buscar dados do veículo:', erro);
