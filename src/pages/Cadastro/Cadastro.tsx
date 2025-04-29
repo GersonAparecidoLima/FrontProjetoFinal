@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import style from './Cadastro.module.scss';
 import FormularioGenerico from '../../components/FormularioGenerico/FormularioGenerico';
+import UsuarioService from '../../services/usuario.service';
+
 
 function Cadastro() {
   const [sucesso, setSucesso] = useState('');
@@ -8,22 +10,17 @@ function Cadastro() {
 
   async function handleSubmit(dados: { [key: string]: string }) {
     try {
-      const response = await fetch('http://localhost:3000/usuarios', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(dados),
+      const resultado = await UsuarioService.cadastrarUsuario({
+
+        nome: dados.nome,
+        email: dados.email,
+        senha: dados.senha,
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Erro ao cadastrar usuário');
-      }
+      console.log('Usuário cadastrado com sucesso:', resultado);
+      
+      setSucesso('Usuário cadastrado com sucesso!');
 
-      const data = await response.json();
-      console.log('Usuário cadastrado com sucesso:', data);
-      setSucesso(data.mensagem || 'Usuário cadastrado com sucesso!');
       setErro('');
     } catch (error) {
       console.error('Erro:', error);
@@ -42,7 +39,6 @@ function Cadastro() {
     <div className={style.cadastro}>
       <h2>Cadastro de Usuário</h2>
 
-      {/* Feedback visual */}
       {sucesso && <p className={style.sucesso}>{sucesso}</p>}
       {erro && <p className={style.erro}>{erro}</p>}
 

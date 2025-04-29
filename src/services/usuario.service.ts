@@ -1,30 +1,50 @@
 // src/services/usuario.service.ts
-const BASE_URL = 'http://localhost:3000';
+import api from './api'; // Cliente Axios com token JWT, se necessário
 
-export type Usuario = {
+// Interface do tipo de usuário
+export interface Usuario {
   id: string;
   nome: string;
+  email?: string;
+  senha?: string;
+}
+
+// Lista todos os usuários
+const listarUsuarios = async (): Promise<Usuario[]> => {
+  const response = await api.get('/usuarios');
+  return response.data.usuarios || response.data;
 };
 
-const UsuarioService = {
-  listarUsuarios: async (): Promise<Usuario[]> => {
-    const response = await fetch(`${BASE_URL}/usuarios`);
-    if (!response.ok) throw new Error('Erro ao carregar usuários');
-    
-    const data = await response.json();
-    if (Array.isArray(data.usuarios)) {
-      return data.usuarios;
-    } else {
-      throw new Error('Formato de resposta inesperado');
-    }
-  },
+// Busca um usuário por ID
+const buscarUsuarioPorId = async (id: string): Promise<Usuario> => {
+  const response = await api.get(`/usuarios/${id}`);
+  return response.data.usuario || response.data;
+};
 
-  deletarUsuario: async (id: string): Promise<void> => {
-    const response = await fetch(`${BASE_URL}/usuarios/${id}`, {
-      method: 'DELETE',
-    });
-    if (!response.ok) throw new Error('Erro ao deletar usuário');
-  },
+// Cadastra um novo usuário
+const cadastrarUsuario = async (dados: Omit<Usuario, 'id'>): Promise<Usuario> => {
+  const response = await api.post('/usuarios', dados);
+  return response.data;
+};
+
+// Atualiza um usuário existente
+const atualizarUsuario = async (id: string, dados: Partial<Usuario>): Promise<Usuario> => {
+  const response = await api.put(`/usuarios/${id}`, dados);
+  return response.data;
+};
+
+// Deleta um usuário
+const deletarUsuario = async (id: string): Promise<void> => {
+  await api.delete(`/usuarios/${id}`);
+};
+
+// Exporta tudo como objeto
+const UsuarioService = {
+  listarUsuarios,
+  buscarUsuarioPorId,
+  cadastrarUsuario,
+  atualizarUsuario,
+  deletarUsuario,
 };
 
 export default UsuarioService;
