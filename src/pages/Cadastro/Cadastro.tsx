@@ -1,8 +1,9 @@
-// src/pages/Cadastro/Cadastro.tsx
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import UsuarioService from '../../services/usuario.service';
+
+import style from './Cadastro.module.scss'; // Importando o SCSS
+import FormularioGenerico from '../../components/FormularioGenerico/FormularioGenerico';
 
 const Cadastro = () => {
   const [dados, setDados] = useState({
@@ -42,15 +43,16 @@ const Cadastro = () => {
   };
 
   return (
-    <div>
+    <div className={style.cadastro}> {/* Adicionando a classe SCSS */}
       <h2>Cadastrar Usuário</h2>
 
-      {sucesso && <p>{sucesso}</p>}
-      {erro && <p>{erro}</p>}
+      {sucesso && <p className={style.sucesso}>{sucesso}</p>} {/* Usando a classe 'sucesso' */}
+      {erro && <p className={style.popError}>{erro}</p>} {/* Usando a classe 'popError' */}
 
       <form onSubmit={(e) => { e.preventDefault(); handleSubmit(dados); }}>
         <div>
-          <label htmlFor="nome">Nome</label>
+                  
+          <label htmlFor="nome" className={style.label}>Nome</label>
           <input
             type="text"
             id="nome"
@@ -85,7 +87,7 @@ const Cadastro = () => {
           />
         </div>
 
-        <button type="submit">Cadastrar</button>
+        <button className={style.botaoProduto} type="submit">Cadastrar</button> {/* Usando a classe 'botaoProduto' */}
       </form>
     </div>
   );

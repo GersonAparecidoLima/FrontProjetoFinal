@@ -11,6 +11,15 @@
   margin: 0 auto;
 }
 
+label {
+  display: block;
+  margin: 5px;
+  font-weight: bold;
+  color: black; /* Cor preta apenas para a label do campo 'nome' */
+}
+
+
+
 h2 {
   color: black; /* Adiciona a cor preta ao título h2 */
   font-size: 2rem; /* Exemplo de tamanho de fonte */
