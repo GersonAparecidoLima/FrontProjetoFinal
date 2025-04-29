@@ -41,21 +41,28 @@ const VeiculoService = {
     await api.delete(`/veiculos/${id}`);
   },
 
-  // Cadastra um novo veículo
-  cadastrar: async (veiculo: VeiculoInput): Promise<void> => {
-    await api.post('/veiculos', veiculo);
-  },
 
-  // Edita um veículo existente
-  editar: async (id: string, veiculo: VeiculoInput): Promise<void> => {
-    await api.put(`/veiculos/${id}`, veiculo);
-  },
 
-  // Busca por ID (útil para editar)
-  buscarPorId: async (id: string): Promise<Veiculo> => {
-    const response = await api.get<Veiculo>(`/veiculos/${id}`);
-    return response.data;
-  }
+
+
+
+// Busca por ID (para edição)
+buscarPorId: async (id: string): Promise<Veiculo> => {
+  const response = await api.get<Veiculo>(`/veiculos/${id}`);
+  return response.data;
+},
+
+// Cadastra um novo veículo
+cadastrar: async (veiculo: VeiculoInput): Promise<void> => {
+  await api.post('/veiculos', veiculo);
+},
+
+// Edita um veículo existente
+editar: async (id: string, veiculo: VeiculoInput): Promise<void> => {
+  await api.put(`/veiculos/${id}`, veiculo);
+},
+
+
 };
 
 export default VeiculoService;

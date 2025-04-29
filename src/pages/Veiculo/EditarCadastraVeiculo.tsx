@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
-import api from '../../services/api'; // <-- Usa Axios com JWT
 import FormularioGenerico from '../../components/FormularioGenerico/FormularioGenerico';
 import styles from './CadastraVeiculo.module.scss';
 import { useNavigate, useParams } from 'react-router-dom';
+import VeiculoService from '../../services/veiculo.service';
 
 const EditarCadastraVeiculo = () => {
   const formularioRef = useRef<{ submitarFormulario: () => void }>(null);
@@ -18,8 +18,7 @@ const EditarCadastraVeiculo = () => {
     if (id) {
       const fetchVeiculo = async () => {
         try {
-          const resposta = await api.get(`/veiculos/${id}`); // <-- token enviado
-          const veiculo = resposta.data;
+          const veiculo = await VeiculoService.buscarPorId(id);
           setAno(veiculo.ano.toString());
           setModelo(veiculo.modelo);
           setMarca(veiculo.marca.id.toString());
@@ -32,10 +31,6 @@ const EditarCadastraVeiculo = () => {
       fetchVeiculo();
     }
   }, [id]);
-
-  useEffect(() => {
-    console.log('Estado atualizado:', { ano, modelo, marca, valor });
-  }, [ano, modelo, marca, valor]);
 
   const handleAnoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
@@ -82,20 +77,18 @@ const EditarCadastraVeiculo = () => {
   const handleCadastroVeiculo = async (dados: { [key: string]: string }) => {
     try {
       const dadosVeiculo = {
-        marca: { id: parseInt(dados.marca) },
+        marcaId: parseInt(dados.marca),
         modelo: dados.modelo,
         ano: parseInt(dados.ano),
         valor: parseFloat(dados.valor),
       };
 
       if (id) {
-        const response = await api.put(`/veiculos/${id}`, dadosVeiculo); // <-- token enviado
+        await VeiculoService.editar(id, dadosVeiculo);
         alert('Veículo atualizado com sucesso!');
-        console.log('Veículo atualizado:', response.data);
       } else {
-        const response = await api.post('/veiculos', dadosVeiculo); // <-- token enviado
+        await VeiculoService.cadastrar(dadosVeiculo);
         alert('Veículo cadastrado com sucesso!');
-        console.log('Veículo cadastrado:', response.data);
       }
 
       navigate('/veiculos');
@@ -113,29 +106,31 @@ const EditarCadastraVeiculo = () => {
     <div>
       <h2>{id ? 'Editar Veículo' : 'Cadastro de Veículo'}</h2>
 
-      {ano && modelo && marca && valor ? (
-        <FormularioGenerico
-          campos={campos}
-          onSubmit={handleCadastroVeiculo}
-          tipoFormulario="cadastro"
-          exibirBotao={false}
-          ref={formularioRef}
-        />
-      ) : (
+      {id && !ano && !modelo && !marca && !valor ? (
         <p>Carregando dados do veículo...</p>
-      )}
+      ) : (
+        <>
+          <FormularioGenerico
+            campos={campos}
+            onSubmit={handleCadastroVeiculo}
+            tipoFormulario="cadastro"
+            exibirBotao={false}
+            ref={formularioRef}
+          />
 
-      <div className={styles.botoesContainer}>
-        <button
-          className={styles.botao}
-          onClick={() => formularioRef.current?.submitarFormulario()}
-        >
-          {id ? 'Atualizar' : 'Cadastrar'}
-        </button>
-        <button className={styles.botao} onClick={handleCancelar}>
-          Cancelar
-        </button>
-      </div>
+          <div className={styles.botoesContainer}>
+            <button
+              className={styles.botao}
+              onClick={() => formularioRef.current?.submitarFormulario()}
+            >
+              {id ? 'Atualizar' : 'Cadastrar'}
+            </button>
+            <button className={styles.botao} onClick={handleCancelar}>
+              Cancelar
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 };
