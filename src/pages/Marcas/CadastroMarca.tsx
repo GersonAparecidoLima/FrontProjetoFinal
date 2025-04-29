@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import FormularioGenerico from '../../components/FormularioGenerico/FormularioGenerico';
-import api from '../../services/api'; // <-- Usa o Axios com JWT
+import MarcaService from '../../services/marca.service';
 
 const CadastroMarca = () => {
   const navigate = useNavigate();
@@ -17,22 +17,18 @@ const CadastroMarca = () => {
   ];
 
   const handleSubmit = async (dados: { [key: string]: string }) => {
-    console.log('Dados enviados:', dados);
-
     if (!dados.descricao || dados.descricao.trim().length < 3) {
       alert('A descrição da marca deve ter no mínimo 3 caracteres.');
       return;
     }
 
     try {
-      const resposta = await api.post('/marca', dados); // <-- token enviado automaticamente
-
-      console.log('Marca cadastrada com sucesso:', resposta.data);
+      await MarcaService.criar({ descricao: dados.descricao });
       alert('Marca cadastrada com sucesso!');
       navigate('/marcas');
     } catch (erro) {
-      console.error('Erro:', erro);
-      alert('Erro ao cadastrar a marca');
+      console.error('Erro ao cadastrar marca:', erro);
+      alert('Erro ao cadastrar a marca.');
     }
   };
 
