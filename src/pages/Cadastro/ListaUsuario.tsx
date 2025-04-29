@@ -1,39 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import style from './ListaUsuario.module.scss';
 import { useNavigate } from 'react-router-dom';
-
-
-
-type Usuario = {
-  id: string; // Alterado para string (UUID)
-  nome: string;
-};
+import UsuarioService, { Usuario } from '../../services/usuario.service';
 
 const ListaUsuario = () => {
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [erro, setErro] = useState('');
-
-  
   const navigate = useNavigate();
-
 
   const fetchUsuarios = async () => {
     try {
-      const response = await fetch('http://localhost:3000/usuarios');
-      if (!response.ok) throw new Error('Erro ao carregar usuários');
-
-      //const data: Usuario[] = await response.json();
-      //setUsuarios(data);
-      const data = await response.json();
-
-      if (Array.isArray(data.usuarios)) {
-        setUsuarios(data.usuarios);
-      } else {
-        throw new Error('Formato de resposta inesperado');
-      }
-
-
-
+      const lista = await UsuarioService.listarUsuarios();
+      setUsuarios(lista);
     } catch (error) {
       if (error instanceof Error) setErro(error.message);
       else setErro('Erro desconhecido');
@@ -42,20 +20,15 @@ const ListaUsuario = () => {
 
   const deletarUsuario = async (id: string) => {
     const confirmar = window.confirm('Você realmente deseja excluir este usuário?');
-  
-    if (!confirmar) return; // Se cancelar, sai da função
-  
+    if (!confirmar) return;
+
     try {
-      const response = await fetch(`http://localhost:3000/usuarios/${id}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) throw new Error('Erro ao deletar usuário');
-      setUsuarios(usuarios.filter(usuario => usuario.id !== id));
+      await UsuarioService.deletarUsuario(id);
+      setUsuarios(usuarios.filter((usuario) => usuario.id !== id));
     } catch (error) {
       if (error instanceof Error) setErro(error.message);
     }
   };
-  
 
   const editarUsuario = (id: string) => {
     navigate(`/editar/${id}`);
@@ -89,7 +62,7 @@ const ListaUsuario = () => {
                 </button>
                 <button
                   className={`${style.botaoAcao} ${style.botaoDeletar}`}
-                  onClick={() => deletarUsuario(usuario.id)} // Passando o ID como string
+                  onClick={() => deletarUsuario(usuario.id)}
                 >
                   Deletar
                 </button>
