@@ -6,7 +6,7 @@ export default function Inicio() {
   return (
     <section>
       <h3 className={styles.titulo}>
-          Bem-vindo ao Aplicativo
+          Bem-vindo ao Aplicativo Carango Bom.
       </h3>
       <div>
         {/* Usando o componente Cadastro */}

@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Tabela from '../../components/Tabela/Tabela';
 import styles from './index.module.scss';
 import api from '../../services/api'; // Importa o client com token JWT
+import { AxiosError } from 'axios';
 
 const Marcas = () => {
   const navigate = useNavigate();
@@ -36,10 +37,26 @@ const Marcas = () => {
       ]);
 
       setDados(dadosFormatados);
-    } catch (erro) {
+    } catch (erro: unknown) {
+          const axiosError = erro as AxiosError;
+    
+          if (axiosError.response?.status === 401) {
+            navigate('/');
+           // alert('acesso negado.');
+           
+          } else {
+            console.error('Erro ao carregar veículos:', axiosError);
+            alert('Erro ao carregar veículos');
+          }
+        }
+
+    /*
+    catch (erro) {
       console.error('Erro ao carregar marcas:', erro);
       alert('Erro ao carregar marcas');
     }
+*/
+
   };
 
   useEffect(() => {
@@ -68,12 +85,12 @@ const Marcas = () => {
     <div className={styles.container}>
       <div className={styles.tabelaContainer}>
         <h2>Lista Marca</h2>
+        <Tabela cabecalhos={cabecalhos} dados={dados} />
         <div className={styles.botoesContainer}>
           <button className={styles.botao} onClick={() => navigate('/cadastro-marca')}>
             Incluir
           </button>
         </div>
-        <Tabela cabecalhos={cabecalhos} dados={dados} />
       </div>
     </div>
   );
