@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Tabela from '../../components/Tabela/Tabela';
 import styles from './index.module.scss';
-import api from '../../services/api'; // Importa o client com token JWT
+import MarcaService, { Marca } from '../../services/marca.service';
 import { AxiosError } from 'axios';
 
 const Marcas = () => {
@@ -12,15 +12,16 @@ const Marcas = () => {
   const cabecalhos = ['Marca', 'Ações'];
   const [dados, setDados] = useState<any[]>([]);
 
-  // Busca as marcas da API protegida
   const fetchMarcas = async () => {
     try {
-      const resposta = await api.get('/marca'); // Envia Authorization: Bearer <token>
-      const marcas = resposta.data;
+      const marcas = await MarcaService.listarTodas();
 
-      const dadosFormatados = marcas.map((marca: { descricao: string; id: string }) => [
+      const dadosFormatados = marcas.map((marca: Marca) => [
         marca.descricao,
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+        <div
+          key={marca.id}
+          style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}
+        >
           <button
             className={`${styles.botao} ${styles.alterar}`}
             onClick={() => handleAlterar(marca.id)}
@@ -38,25 +39,14 @@ const Marcas = () => {
 
       setDados(dadosFormatados);
     } catch (erro: unknown) {
-          const axiosError = erro as AxiosError;
-    
-          if (axiosError.response?.status === 401) {
-            navigate('/');
-           // alert('acesso negado.');
-           
-          } else {
-            console.error('Erro ao carregar veículos:', axiosError);
-            alert('Erro ao carregar veículos');
-          }
-        }
-
-    /*
-    catch (erro) {
-      console.error('Erro ao carregar marcas:', erro);
-      alert('Erro ao carregar marcas');
+      const axiosError = erro as AxiosError;
+      if (axiosError.response?.status === 401) {
+        navigate('/');
+      } else {
+        console.error('Erro ao carregar marcas:', axiosError);
+        alert('Erro ao carregar marcas');
+      }
     }
-*/
-
   };
 
   useEffect(() => {
@@ -71,9 +61,9 @@ const Marcas = () => {
     const confirmacao = window.confirm('Tem certeza que deseja excluir esta marca?');
     if (confirmacao) {
       try {
-        await api.delete(`/marca/${id}`); // Envia Authorization: Bearer <token>
+        await MarcaService.excluir(id);
         alert('Marca excluída com sucesso!');
-        fetchMarcas(); // Atualiza lista após exclusão
+        fetchMarcas();
       } catch (erro) {
         console.error('Erro ao excluir marca:', erro);
         alert('Erro ao excluir a marca');
