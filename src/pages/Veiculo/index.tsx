@@ -5,13 +5,13 @@ import styles from './index.module.scss';
 import { AxiosError } from 'axios';
 import VeiculoService from '../../services/veiculo.service';
 
-
 const Veiculo = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   const cabecalhos = ['Marca', 'Modelo', 'Ano', 'Valor', 'Ação'];
   const [dados, setDados] = useState<any[]>([]);
+  const [refresh, setRefresh] = useState(false); //  Força re-render
 
   const fetchVeiculos = async () => {
     try {
@@ -30,7 +30,7 @@ const Veiculo = () => {
           veiculo.modelo,
           veiculo.ano.toString(),
           valor,
-          <div className={styles.acoesContainer} key={veiculo.id}>
+          <div className={styles.acoesContainer} key={`acoes-${veiculo.id}`}>
             <button
               className={styles.botao}
               onClick={() => handleEditar(veiculo.id)}
@@ -61,7 +61,7 @@ const Veiculo = () => {
 
   useEffect(() => {
     fetchVeiculos();
-  }, [location]);
+  }, [location, refresh]); //  Recarrega quando o refresh muda
 
   const handleEditar = (id: string) => {
     navigate(`/editar-veiculo/${id}`);
@@ -73,7 +73,7 @@ const Veiculo = () => {
       try {
         await VeiculoService.excluir(id);
         alert('Veículo excluído com sucesso!');
-        fetchVeiculos();
+        setRefresh((prev) => !prev); //  Força re-render ao trocar o valor
       } catch (erro: unknown) {
         const axiosError = erro as AxiosError;
         if (axiosError.response?.status === 401) {
