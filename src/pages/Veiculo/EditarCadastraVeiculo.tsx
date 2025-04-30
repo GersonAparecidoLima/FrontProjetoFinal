@@ -3,6 +3,7 @@ import FormularioGenerico from '../../components/FormularioGenerico/FormularioGe
 import styles from './CadastraVeiculo.module.scss';
 import { useNavigate, useParams } from 'react-router-dom';
 import VeiculoService from '../../services/veiculo.service';
+import MarcaService from '../../services/marca.service';
 
 const EditarCadastraVeiculo = () => {
   const formularioRef = useRef<{ submitarFormulario: () => void }>(null);
@@ -11,8 +12,27 @@ const EditarCadastraVeiculo = () => {
 
   const [ano, setAno] = useState<string>('');
   const [modelo, setModelo] = useState<string>('');
-  const [marca, setMarca] = useState<string>('');
+  const [marcaId, setMarcaId] = useState<string>(''); // Salva o ID da marca
   const [valor, setValor] = useState<string>('');
+  const [opcoesMarca, setOpcoesMarca] = useState<{ label: string; valor: string }[]>([]);
+
+  useEffect(() => {
+    const fetchMarcas = async () => {
+      try {
+        const marcas = await MarcaService.listarTodas();
+        const marcasFormatadas = marcas.map((marca) => ({
+          label: marca.descricao,
+          valor: marca.id.toString(),
+        }));
+        setOpcoesMarca(marcasFormatadas);
+      } catch (error) {
+        console.error('Erro ao carregar marcas:', error);
+        alert('Erro ao carregar marcas.');
+      }
+    };
+
+    fetchMarcas();
+  }, []);
 
   useEffect(() => {
     if (id) {
@@ -21,7 +41,7 @@ const EditarCadastraVeiculo = () => {
           const veiculo = await VeiculoService.buscarPorId(id);
           setAno(veiculo.ano.toString());
           setModelo(veiculo.modelo);
-          setMarca(veiculo.marca.descricao.toString());
+          setMarcaId(veiculo.marca.id.toString()); // Aqui usamos o ID corretamente
           setValor(veiculo.valor.toString());
         } catch (erro) {
           console.error('Erro ao buscar dados do veículo:', erro);
@@ -42,11 +62,12 @@ const EditarCadastraVeiculo = () => {
   const campos = [
     {
       label: 'Marca',
-      tipo: 'text',
+      tipo: 'select',
       nome: 'marca',
-      valor: marca,
+      valor: marcaId,
       required: true,
-      onChange: (e: any) => setMarca(e.target.value),
+      opcoes: opcoesMarca,
+      onChange: (e: any) => setMarcaId(e.target.value),
     },
     {
       label: 'Modelo',
@@ -77,10 +98,12 @@ const EditarCadastraVeiculo = () => {
   const handleCadastroVeiculo = async (dados: { [key: string]: string }) => {
     try {
       const dadosVeiculo = {
-        marcaId: parseInt(dados.marca),
         modelo: dados.modelo,
         ano: parseInt(dados.ano),
         valor: parseFloat(dados.valor),
+        marca: {
+          id: parseInt(dados.marca),
+        },
       };
 
       if (id) {
@@ -106,7 +129,7 @@ const EditarCadastraVeiculo = () => {
     <div>
       <h2>{id ? 'Editar Veículo' : 'Cadastro de Veículo'}</h2>
 
-      {id && !ano && !modelo && !marca && !valor ? (
+      {id && !ano && !modelo && !marcaId && !valor ? (
         <p>Carregando dados do veículo...</p>
       ) : (
         <>

@@ -1,3 +1,5 @@
+// src/pages/Veiculo/CadastraVeiculo.tsx
+
 import React, { useRef, useState, useEffect } from 'react';
 import FormularioGenerico from '../../components/FormularioGenerico/FormularioGenerico';
 import styles from './CadastraVeiculo.module.scss';
@@ -80,10 +82,12 @@ const CadastraVeiculo = () => {
 
     try {
       await VeiculoService.cadastrar({
-        marcaId: parseInt(dados.marca),
         modelo: dados.modelo,
         ano: anoNumero,
         valor: valorNumero,
+        marca: {
+          id: parseInt(dados.marca),
+        },
       });
 
       alert('Veículo cadastrado com sucesso!');

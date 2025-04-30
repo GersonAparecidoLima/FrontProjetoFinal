@@ -1,5 +1,8 @@
+// src/services/veiculo.service.ts
+
 import api from './api';
 
+// Interfaces
 export interface Marca {
   id: number;
   descricao: string;
@@ -13,21 +16,24 @@ export interface Veiculo {
   valor: number | string;
 }
 
+// ✅ Novo formato compatível com CreateVeiculoDto no backend
 export interface VeiculoInput {
-  marcaId: number;
   modelo: string;
   ano: number;
   valor: number;
+  marca: {
+    id: number;
+  };
 }
 
 const VeiculoService = {
-  // Lista completa (rota protegida)
+  // Lista protegida (rota com autenticação)
   listarTodos: async (): Promise<Veiculo[]> => {
     const response = await api.get<Veiculo[]>('/veiculos');
     return response.data;
   },
 
-  // Lista pública (rota aberta)
+  // Lista pública (rota sem autenticação)
   listarPublicos: async (): Promise<Veiculo[]> => {
     const response = await fetch('http://localhost:3000/veiculos/publico');
     if (!response.ok) {
@@ -36,30 +42,26 @@ const VeiculoService = {
     return response.json();
   },
 
-  // Exclui um veículo
+  // Buscar veículo por ID
+  buscarPorId: async (id: string): Promise<Veiculo> => {
+    const response = await api.get<Veiculo>(`/veiculos/${id}`);
+    return response.data;
+  },
+
+  // Cadastrar novo veículo
+  cadastrar: async (veiculo: VeiculoInput): Promise<void> => {
+    await api.post('/veiculos', veiculo);
+  },
+
+  // Editar veículo existente
+  editar: async (id: string, veiculo: VeiculoInput): Promise<void> => {
+    await api.put(`/veiculos/${id}`, veiculo);
+  },
+
+  // Excluir veículo
   excluir: async (id: string): Promise<void> => {
     await api.delete(`/veiculos/${id}`);
   },
-
-
-
-// Busca por ID (para edição)
-buscarPorId: async (id: string): Promise<Veiculo> => {
-  const response = await api.get<Veiculo>(`/veiculos/${id}`);
-  return response.data;
-},
-
-// Cadastra um novo veículo
-cadastrar: async (veiculo: VeiculoInput): Promise<void> => {
-  await api.post('/veiculos', veiculo);
-},
-
-// Edita um veículo existente
-editar: async (id: string, veiculo: VeiculoInput): Promise<void> => {
-  await api.put(`/veiculos/${id}`, veiculo);
-},
-
-
 };
 
 export default VeiculoService;

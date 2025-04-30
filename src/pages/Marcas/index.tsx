@@ -75,12 +75,12 @@ const Marcas = () => {
     <div className={styles.container}>
       <div className={styles.tabelaContainer}>
         <h2>Lista Marca</h2>
-        <Tabela cabecalhos={cabecalhos} dados={dados} />
         <div className={styles.botoesContainer}>
           <button className={styles.botao} onClick={() => navigate('/cadastro-marca')}>
             Incluir
           </button>
         </div>
+        <Tabela cabecalhos={cabecalhos} dados={dados} />
       </div>
     </div>
   );

@@ -16,6 +16,7 @@ import Tarefa from './Tarefa/Tarefa';
 import ListaUsuario from './Cadastro/ListaUsuario';
 import Logout from './Sair/Logout';
 import VeiculoPublico from './Veiculo/indexPublico';
+import Dashboard from './Dashboard';
 
 function App() {
   return (
@@ -35,7 +36,7 @@ function App() {
           <Route path="/cadastro" element={<Cadastro />} />
           <Route path="/lista-usuario" element={<ListaUsuario />} />
           <Route path="/cadastro-marca" element={<CadastroMarca />} />
-          <Route path="/dashboard" element={<div>Em breve: Página de Veículo</div>} />
+          <Route path="/dashboard" element={<Dashboard />} />          
           <Route path="/sair" element={<Logout />} />
           <Route path="/editar-marca/:id" element={<EditarCadastroMarca />} />
           <Route path="/editar/:id" element={<EditarCadastro />} />
