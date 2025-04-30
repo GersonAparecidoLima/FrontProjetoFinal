@@ -9,7 +9,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const cabecalhos = ['Marca', 'Modelo', 'Ano', 'Valor'];
+
   const cabecalhosResumo = ['Marca', 'Quantidade', 'Valor Total (R$)'];
 
   const [dados, setDados] = useState<string[][]>([]);
@@ -76,11 +76,6 @@ const Dashboard = () => {
       <div className={styles.resumoContainer}>
         <h3>Resumo por Marca</h3>
         <Tabela cabecalhos={cabecalhosResumo} dados={resumoFormatado} />
-      </div>
-
-      <div className={styles.tabelaContainer}>
-        <h3>Lista de Veículos</h3>
-        <Tabela cabecalhos={cabecalhos} dados={dados} />
       </div>
     </div>
   );
